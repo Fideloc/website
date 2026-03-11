@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from "astro/config";
+import { defineConfig, fontProviders } from "astro/config";
 
 import vercel from '@astrojs/vercel';
 import react from "@astrojs/react";
@@ -19,6 +19,21 @@ export default defineConfig({
       dataset: "production",
       studioBasePath: '/studio'
     }),
+  ],
+
+  fonts: [
+    {
+      provider: fontProviders.fontshare(),
+      name: "Satoshi",
+      cssVariable: "--astro-font-heading",
+      weights: [400, 500, 600, 700],
+    },
+    {
+      provider: fontProviders.google(),
+      name: "Inter",
+      cssVariable: "--astro-font-body",
+      weights: [400, 500, 600],
+    },
   ],
 
   vite: {

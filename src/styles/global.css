@@ -1,16 +1,8 @@
-@import url("https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/inter";
 
 @custom-variant dark (&:is(.dark *));
-
-@theme {
-  --font-heading: "Satoshi", sans-serif;
-  --font-body: "Inter", sans-serif;
-}
 
 :root {
   --radius: 0.45rem;
@@ -104,7 +96,8 @@
 }
 
 @theme inline {
-  --font-sans: 'Inter Variable', sans-serif;
+  --font-heading: var(--astro-font-heading);
+  --font-body: var(--astro-font-body);
   --color-brand-accent: var(--brand-accent);
   --color-brand-accent-foreground: var(--brand-accent-foreground);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -155,6 +148,6 @@
     @apply bg-background text-foreground;
   }
   html {
-    @apply font-sans;
+    @apply font-body;
   }
 }
