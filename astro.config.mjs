@@ -1,7 +1,7 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 
-import node from "@astrojs/node";
+import vercel from '@astrojs/vercel';
 import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
 
@@ -9,9 +9,7 @@ import sanity from "@sanity/astro";
 
 // https://astro.build/config
 export default defineConfig({
-  adapter: node({
-    mode: "standalone",
-  }),
+  adapter: vercel(),
   integrations: [
     react(),
     sanity({
@@ -24,6 +22,7 @@ export default defineConfig({
   ],
 
   vite: {
+    // @ts-expect-error - @tailwindcss/vite targets vite 7, astro bundles vite 6
     plugins: [tailwindcss()],
   },
 });
