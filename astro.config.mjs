@@ -22,7 +22,6 @@ export default defineConfig({
   ],
 
   vite: {
-    // @ts-expect-error - @tailwindcss/vite targets vite 7, astro bundles vite 6
     plugins: [tailwindcss()],
   },
 });

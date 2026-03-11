@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { z } from "zod/v4";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -62,6 +64,41 @@ const categories = [
   },
   { icon: IconLuggage, name: "Voyage", desc: "Remorques, porte-vélos" },
 ];
+
+const emailSchema = z.string().email();
+
+function EmailField() {
+  const [value, setValue] = useState("");
+  const result = emailSchema.safeParse(value);
+  const showError = value.length > 0 && !result.success;
+
+  return (
+    <div className="flex max-w-md flex-col gap-3">
+      <Input placeholder="Rechercher un équipement..." />
+      <div className="space-y-1.5">
+        <div className="flex gap-2">
+          <Input
+            placeholder="Votre email"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            aria-invalid={showError}
+          />
+          <Button variant="accent" disabled={!result.success}>
+            Envoyer
+          </Button>
+        </div>
+        {showError && (
+          <p className="text-destructive text-xs">
+            {result.error.issues[0].message}
+          </p>
+        )}
+        {result.success && value.length > 0 && (
+          <p className="text-xs text-green-600">Email valide</p>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function MoodboardShowcase() {
   return (
@@ -152,13 +189,7 @@ export default function MoodboardShowcase() {
           <p className="text-brand-accent text-xs font-medium tracking-wider uppercase">
             Champs
           </p>
-          <div className="flex max-w-md flex-col gap-3">
-            <Input placeholder="Rechercher un équipement..." />
-            <div className="flex gap-2">
-              <Input placeholder="Votre email" />
-              <Button variant="accent">Envoyer</Button>
-            </div>
-          </div>
+          <EmailField />
         </div>
       </section>
 
