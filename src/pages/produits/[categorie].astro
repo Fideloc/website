@@ -1,0 +1,92 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import {
+  getAllCategories,
+  getCategoryBySlug,
+  getProductsByCategory,
+} from "../../lib/sanity";
+
+export async function getStaticPaths() {
+  const categories = await getAllCategories();
+  return (categories ?? []).map((cat: any) => ({
+    params: { categorie: cat.slug },
+  }));
+}
+
+const { categorie } = Astro.params;
+const category = await getCategoryBySlug(categorie!);
+
+if (!category) {
+  return Astro.redirect("/produits");
+}
+
+const products = await getProductsByCategory(category._id);
+---
+
+<Layout title={`${category.name} — Fidéloc`}>
+  <section class="mx-auto max-w-4xl px-6 py-16">
+    <a href="/produits" class="text-brand-accent text-sm hover:underline"
+      >&larr; Toutes les catégories</a
+    >
+    <h1
+      class="font-heading text-primary mt-4 text-4xl font-bold tracking-tight"
+    >
+      {category.name}
+    </h1>
+    {
+      category.description && (
+        <p class="text-muted-foreground mt-2">{category.description}</p>
+      )
+    }
+  </section>
+
+  <section class="mx-auto max-w-4xl px-6 pb-16">
+    {
+      products && products.length > 0 ? (
+        <ul class="space-y-4">
+          {products.map((product: any) => (
+            <li class="border-border rounded-lg border p-4">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <p class="font-heading text-primary font-semibold">
+                    {product.name}
+                  </p>
+                  {product.code && (
+                    <p class="text-muted-foreground text-xs">
+                      Code : {product.code}
+                    </p>
+                  )}
+                  {product.dimensions && (
+                    <p class="text-muted-foreground mt-1 text-sm">
+                      Dimensions : {product.dimensions}
+                    </p>
+                  )}
+                  {product.capacity && (
+                    <p class="text-muted-foreground text-sm">
+                      Capacité : {product.capacity} pers.
+                    </p>
+                  )}
+                </div>
+                <div class="text-right text-sm">
+                  <p class="text-primary font-medium">
+                    {product.priceWeekend} €{" "}
+                    <span class="text-muted-foreground font-normal">
+                      / week-end
+                    </span>
+                  </p>
+                  <p class="text-muted-foreground">
+                    {product.priceWeek} € / semaine
+                  </p>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="text-muted-foreground">
+          Aucun produit dans cette catégorie pour le moment.
+        </p>
+      )
+    }
+  </section>
+</Layout>

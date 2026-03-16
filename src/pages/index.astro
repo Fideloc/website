@@ -1,218 +1,65 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import MoodboardShowcase from "../components/MoodboardShowcase";
-import ColorTweaker from "../components/ColorTweaker";
-import LogoBlack from "../assets/logo-black.svg";
+import { getSiteSettings, getAllCategories } from "../lib/sanity";
+
+const settings = await getSiteSettings();
+const categories = await getAllCategories();
 ---
 
-<Layout>
-  <main class="bg-background font-body text-foreground min-h-screen">
-    <!-- Header -->
-    <header class="border-border border-b px-8 py-6">
-      <div class="mx-auto flex max-w-6xl items-center justify-between px-8">
-        <LogoBlack class="h-10 w-auto" aria-label="fidéloc" role="img" />
-        <p class="text-muted-foreground text-sm">Moodboard — Design System</p>
-      </div>
-    </header>
+<Layout
+  title={settings?.companyName
+    ? `${settings.companyName} — Location d'équipement`
+    : "Fidéloc"}
+>
+  <section class="mx-auto max-w-4xl px-6 py-16">
+    <h1 class="font-heading text-primary text-5xl font-bold tracking-tight">
+      {settings?.companyName ?? "Fidéloc"}
+    </h1>
+    {
+      settings?.slogan && (
+        <p class="text-muted-foreground mt-4 text-xl">{settings.slogan}</p>
+      )
+    }
+    {
+      settings?.heroCta && (
+        <a
+          href="/contact"
+          class="bg-brand-accent mt-8 inline-block rounded-lg px-6 py-3 font-medium text-white"
+        >
+          {settings.heroCta}
+        </a>
+      )
+    }
+  </section>
 
-    <div class="mx-auto max-w-6xl space-y-16 px-8 py-12">
-      <!-- SECTION: Typography -->
-      <section class="space-y-8">
-        <div class="space-y-1">
-          <p
-            class="text-muted-foreground text-xs font-medium tracking-widest uppercase"
-          >
-            01 — Typographie
-          </p>
-          <div class="bg-border h-px"></div>
-        </div>
-
-        <div class="grid gap-12 md:grid-cols-2">
-          <!-- Satoshi -->
-          <div class="space-y-6">
-            <p
-              class="text-brand-accent text-xs font-medium tracking-wider uppercase"
-            >
-              Satoshi — Titres
-            </p>
-            <div class="space-y-3">
-              <h1
-                class="font-heading text-primary text-6xl font-bold tracking-tight"
+  <section class="mx-auto max-w-4xl px-6 pb-16">
+    <h2 class="font-heading text-primary mb-8 text-2xl font-semibold">
+      Nos catégories
+    </h2>
+    {
+      categories && categories.length > 0 ? (
+        <ul class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          {categories.map((cat: any) => (
+            <li>
+              <a
+                href={`/produits/${cat.slug}`}
+                class="border-border hover:border-brand-accent block rounded-lg border p-4 transition-colors"
               >
-                Fidéloc
-              </h1>
-              <h2 class="font-heading text-primary text-4xl font-semibold">
-                Location d'équipement
-              </h2>
-              <h3 class="font-heading text-primary text-2xl font-semibold">
-                Pour vos événements
-              </h3>
-              <h4 class="font-heading text-primary text-xl font-medium">
-                Mobilier, son, lumière
-              </h4>
-            </div>
-            <div class="bg-primary rounded-lg px-5 py-4">
-              <p class="font-heading text-3xl font-bold text-white">
-                Aa Bb Cc 123
-              </p>
-              <p class="font-heading mt-1 text-sm text-white/60">
-                Satoshi Bold — Fontshare
-              </p>
-            </div>
-          </div>
-
-          <!-- Inter -->
-          <div class="space-y-6">
-            <p
-              class="text-brand-accent text-xs font-medium tracking-wider uppercase"
-            >
-              Inter — Corps de texte
-            </p>
-            <div class="space-y-4">
-              <p class="text-foreground text-base leading-relaxed">
-                Fidéloc propose une large gamme d'équipements en location pour
-                vos événements, jardins et projets de rénovation. Du mobilier
-                élégant au matériel son & image, nous avons tout ce qu'il vous
-                faut.
-              </p>
-              <p class="text-muted-foreground text-sm leading-relaxed">
-                Texte secondaire — Idéal pour les descriptions, mentions légales
-                et contenus complémentaires. Inter offre une lisibilité maximale
-                à toutes les tailles.
-              </p>
-              <p class="text-muted-foreground text-xs">
-                TEXTE CAPTION — Petites annotations, labels et métadonnées
-              </p>
-            </div>
-            <div class="bg-muted rounded-lg px-5 py-4">
-              <p class="text-foreground text-3xl font-medium">Aa Bb Cc 123</p>
-              <p class="text-muted-foreground mt-1 text-sm">
-                Inter Regular — Google Fonts
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECTION: Colors -->
-      <section class="space-y-8">
-        <div class="space-y-1">
-          <p
-            class="text-muted-foreground text-xs font-medium tracking-widest uppercase"
-          >
-            02 — Palette de couleurs
-          </p>
-          <div class="bg-border h-px"></div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
-          <div class="space-y-2">
-            <div
-              class="bg-primary ring-foreground/5 aspect-square rounded-2xl shadow-sm ring-1"
-            >
-            </div>
-            <div>
-              <p class="text-sm font-medium">Navy</p>
-              <p class="text-muted-foreground font-mono text-xs">#1a2b4a</p>
-              <p class="text-muted-foreground text-xs">Primaire</p>
-            </div>
-          </div>
-
-          <div class="space-y-2">
-            <div
-              class="bg-brand-accent ring-foreground/5 aspect-square rounded-2xl shadow-sm ring-1"
-            >
-            </div>
-            <div>
-              <p class="text-sm font-medium">Orange</p>
-              <p class="text-muted-foreground font-mono text-xs">#e07a2f</p>
-              <p class="text-muted-foreground text-xs">Accent / CTA</p>
-            </div>
-          </div>
-
-          <div class="space-y-2">
-            <div
-              class="bg-background ring-foreground/10 aspect-square rounded-2xl shadow-sm ring-1"
-            >
-            </div>
-            <div>
-              <p class="text-sm font-medium">Fond clair</p>
-              <p class="text-muted-foreground font-mono text-xs">#f7f8fa</p>
-              <p class="text-muted-foreground text-xs">Background</p>
-            </div>
-          </div>
-
-          <div class="space-y-2">
-            <div
-              class="bg-foreground ring-foreground/5 aspect-square rounded-2xl shadow-sm ring-1"
-            >
-            </div>
-            <div>
-              <p class="text-sm font-medium">Texte</p>
-              <p class="text-muted-foreground font-mono text-xs">#1e293b</p>
-              <p class="text-muted-foreground text-xs">Corps</p>
-            </div>
-          </div>
-
-          <div class="space-y-2">
-            <div
-              class="bg-muted-foreground ring-foreground/5 aspect-square rounded-2xl shadow-sm ring-1"
-            >
-            </div>
-            <div>
-              <p class="text-sm font-medium">Gris</p>
-              <p class="text-muted-foreground font-mono text-xs">#6b7280</p>
-              <p class="text-muted-foreground text-xs">Secondaire</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid gap-4 sm:grid-cols-3">
-          <div class="bg-primary flex items-center gap-4 rounded-xl px-6 py-5">
-            <div class="size-10 rounded-full bg-white/20"></div>
-            <div>
-              <p class="font-heading text-sm font-semibold text-white">
-                Navy sur fond sombre
-              </p>
-              <p class="text-xs text-white/60">Titres, header, footer</p>
-            </div>
-          </div>
-          <div
-            class="bg-brand-accent flex items-center gap-4 rounded-xl px-6 py-5"
-          >
-            <div class="size-10 rounded-full bg-white/20"></div>
-            <div>
-              <p class="font-heading text-sm font-semibold text-white">
-                Orange accent
-              </p>
-              <p class="text-xs text-white/80">Boutons CTA, liens actifs</p>
-            </div>
-          </div>
-          <div
-            class="bg-card ring-border flex items-center gap-4 rounded-xl px-6 py-5 ring-1"
-          >
-            <div class="bg-primary/10 size-10 rounded-full"></div>
-            <div>
-              <p class="font-heading text-foreground text-sm font-semibold">
-                Carte blanche
-              </p>
-              <p class="text-muted-foreground text-xs">Contenu, produits</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- React island: Components, Icons, Cards, Hero -->
-      <MoodboardShowcase client:load />
-    </div>
-
-    <!-- Footer -->
-    <footer
-      class="border-border text-muted-foreground border-t px-8 py-6 text-center text-xs"
-    >
-      fidéloc — moodboard v1
-    </footer>
-  </main>
-
-  <ColorTweaker client:load />
+                <p class="font-heading text-primary font-semibold">
+                  {cat.name}
+                </p>
+                {cat.description && (
+                  <p class="text-muted-foreground mt-1 text-sm">
+                    {cat.description}
+                  </p>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="text-muted-foreground">Aucune catégorie pour le moment.</p>
+      )
+    }
+  </section>
 </Layout>

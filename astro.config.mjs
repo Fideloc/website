@@ -4,19 +4,24 @@ import { defineConfig, fontProviders } from "astro/config";
 import vercel from '@astrojs/vercel';
 import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
+import { loadEnv } from "vite";
 
 import sanity from "@sanity/astro";
 
+const env = loadEnv(process.env.NODE_ENV ?? "development", process.cwd(), "");
+
 // https://astro.build/config
 export default defineConfig({
+  output: 'server',
   adapter: vercel(),
   integrations: [
     react(),
     sanity({
       // Astro does not directly support environment variables in the config file
       // https://docs.astro.build/en/guides/environment-variables/#in-the-astro-config-file
-      projectId: "sjagkr9a",
-      dataset: "production",
+      projectId: env.PUBLIC_SANITY_PROJECT_ID,
+      dataset: env.PUBLIC_SANITY_DATASET,
+      useCdn: false,
       studioBasePath: '/studio'
     }),
   ],

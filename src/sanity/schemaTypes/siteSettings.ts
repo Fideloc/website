@@ -82,5 +82,48 @@ export const siteSettingsType = defineType({
         },
       ],
     }),
+    defineField({
+      name: "footerLinks",
+      title: "Liens du pied de page",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({
+              name: "label",
+              title: "Libellé",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "page",
+              title: "Page",
+              type: "reference",
+              to: [{ type: "page" }],
+            }),
+            defineField({
+              name: "url",
+              title: "URL",
+              type: "string",
+              description: "Ex: /a-propos, /mentions-legales",
+            }),
+          ],
+          validation: (rule) =>
+            rule.custom((item) => {
+              const obj = item as
+                | { page?: { _ref?: string }; url?: string }
+                | undefined;
+              if (!obj?.page?._ref && !obj?.url) {
+                return "Renseignez au moins une page ou une URL";
+              }
+              return true;
+            }),
+          preview: {
+            select: { title: "label" },
+          },
+        },
+      ],
+    }),
   ],
 });
