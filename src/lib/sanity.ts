@@ -10,7 +10,7 @@ import {
 
 // Image URL builder
 const builder = createImageUrlBuilder(sanityClient);
-export function urlFor(source: any) {
+export function urlFor(source: string) {
   return builder.image(source);
 }
 

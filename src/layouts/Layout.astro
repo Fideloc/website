@@ -37,7 +37,7 @@ const currentPath = Astro.url.pathname;
         </a>
         <nav class="flex items-center gap-6">
           {
-            navLinks.map((link: any) => {
+            navLinks.map((link) => {
               const href =
                 link.url || (link.page?.slug ? `/${link.page.slug}` : "/");
               const isActive =
@@ -74,7 +74,7 @@ const currentPath = Astro.url.pathname;
         </p>
         <nav class="flex items-center gap-4">
           {
-            footerLinks.map((link: any) => {
+            footerLinks.map((link) => {
               const href =
                 link.url || (link.page?.slug ? `/${link.page.slug}` : "/");
               return (

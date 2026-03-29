@@ -8,7 +8,7 @@ import {
 
 export async function getStaticPaths() {
   const categories = await getAllCategories();
-  return (categories ?? []).map((cat: any) => ({
+  return (categories ?? []).map((cat) => ({
     params: { categorie: cat.slug },
   }));
 }
@@ -44,7 +44,7 @@ const products = await getProductsByCategory(category._id);
     {
       products && products.length > 0 ? (
         <ul class="space-y-4">
-          {products.map((product: any) => (
+          {products.map((product) => (
             <li class="border-border rounded-lg border p-4">
               <div class="flex items-start justify-between gap-4">
                 <div>
