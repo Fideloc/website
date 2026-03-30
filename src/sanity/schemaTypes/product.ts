@@ -21,6 +21,8 @@ export const productType = defineType({
       name: "slug",
       title: "Slug",
       type: "slug",
+      description:
+        "URL de la page produit générée automatiquement à partir du nom (ex: baby-foot-pliable)",
       options: { source: "name" },
       validation: (rule) => rule.required(),
     }),

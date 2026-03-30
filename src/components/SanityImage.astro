@@ -1,0 +1,37 @@
+---
+import type {
+  PRODUCT_BY_SLUG_QUERY_RESULT,
+  PRODUCTS_BY_CATEGORY_QUERY_RESULT,
+} from "../lib/sanity.types";
+import { urlFor } from "../lib/sanity";
+
+type DetailImage = NonNullable<
+  NonNullable<PRODUCT_BY_SLUG_QUERY_RESULT>["images"]
+>[number];
+type ListImage = NonNullable<
+  PRODUCTS_BY_CATEGORY_QUERY_RESULT[number]["images"]
+>;
+
+interface Props {
+  image: DetailImage | ListImage;
+  width?: number;
+  class?: string;
+  loading?: "lazy" | "eager";
+}
+
+const { image, width = 800, class: className, loading = "lazy" } = Astro.props;
+
+let url: string | undefined;
+
+try {
+  if (image.asset) {
+    url = urlFor(image).width(width).fit("max").auto("format").url();
+  }
+} catch (error) {
+  console.error(error);
+}
+
+const alt = image.alt ?? "";
+---
+
+{url && <img src={url} alt={alt} class={className} loading={loading} />}

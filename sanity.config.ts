@@ -1,7 +1,9 @@
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
+import { presentationTool } from "sanity/presentation";
 import { schemaTypes } from "./src/sanity/schemaTypes";
 import { structure } from "./src/sanity/structure";
+import { locations, mainDocuments } from "./src/sanity/presentation/resolve";
 
 // This file is loaded in two contexts:
 // - Browser (Vite/Astro Studio): only import.meta.env is available
@@ -16,10 +18,21 @@ const dataset =
     ? import.meta.env.PUBLIC_SANITY_DATASET
     : process.env.PUBLIC_SANITY_DATASET;
 
+const previewUrl =
+  typeof import.meta.env !== "undefined"
+    ? import.meta.env.PUBLIC_SITE_URL ?? "http://localhost:4321"
+    : process.env.PUBLIC_SITE_URL ?? "http://localhost:4321";
+
 export default defineConfig({
   projectId: projectId ?? "",
   dataset: dataset ?? "",
-  plugins: [structureTool({ structure })],
+  plugins: [
+    structureTool({ structure }),
+    presentationTool({
+      previewUrl,
+      resolve: { locations, mainDocuments },
+    }),
+  ],
   schema: {
     types: schemaTypes,
   },

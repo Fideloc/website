@@ -3,15 +3,13 @@ import Layout from "../layouts/Layout.astro";
 import { PortableText } from "astro-portabletext";
 import { getPageBySlug } from "../lib/sanity";
 
-const page = await getPageBySlug("mentions-legales");
+const { data: page } = await getPageBySlug("mentions-legales");
 ---
 
-<Layout
-  title={page?.title ? `${page.title} — Fidéloc` : "Mentions légales — Fidéloc"}
->
+<Layout title={page?.title ? `${page.title} - Fidéloc` : ""}>
   <section class="mx-auto max-w-3xl px-6 py-16">
     <h1 class="font-heading text-primary text-4xl font-bold tracking-tight">
-      {page?.title ?? "Mentions légales"}
+      {page?.title ?? ""}
     </h1>
     {
       page?.content ? (

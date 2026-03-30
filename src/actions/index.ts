@@ -88,7 +88,7 @@ export const server = {
 </body>
 </html>`;
 
-      const settings = await getSiteSettings();
+      const { data: settings } = await getSiteSettings();
       if (!settings?.email) {
         throw new ActionError({
           code: "INTERNAL_SERVER_ERROR",

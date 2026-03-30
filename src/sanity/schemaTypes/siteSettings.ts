@@ -4,6 +4,10 @@ export const siteSettingsType = defineType({
   name: "siteSettings",
   title: "Paramètres du site",
   type: "document",
+  groups: [
+    { name: "hero", title: "Hero" },
+    { name: "navigation", title: "Navigation" },
+  ],
   fields: [
     defineField({
       name: "companyName",
@@ -34,15 +38,46 @@ export const siteSettingsType = defineType({
       description: "Ex: Martinique, Fort-de-France et environs",
     }),
     defineField({
-      name: "heroCta",
-      title: "Bouton d'appel à l'action",
+      name: "heroHeadline",
+      title: "Titre principal",
       type: "string",
-      description: "Texte du bouton d'appel à l'action",
+      description: "Première ligne du titre hero",
+      group: "hero",
+    }),
+    defineField({
+      name: "heroHeadlineAccent",
+      title: "Titre accentué",
+      type: "string",
+      description: "Partie mise en couleur du titre hero",
+      group: "hero",
+    }),
+    defineField({
+      name: "heroDescription",
+      title: "Description",
+      type: "text",
+      rows: 3,
+      description: "Paragraphe sous le titre hero",
+      group: "hero",
+    }),
+    defineField({
+      name: "heroPrimaryCta",
+      title: "Bouton principal",
+      type: "string",
+      description: "Ex : Voir le catalogue",
+      group: "hero",
+    }),
+    defineField({
+      name: "heroSecondaryCta",
+      title: "Bouton secondaire",
+      type: "string",
+      description: "Ex : Demander un devis",
+      group: "hero",
     }),
     defineField({
       name: "navigation",
       title: "Navigation",
       type: "array",
+      group: "navigation",
       of: [
         {
           type: "object",
@@ -86,6 +121,7 @@ export const siteSettingsType = defineType({
       name: "footerLinks",
       title: "Liens du pied de page",
       type: "array",
+      group: "navigation",
       of: [
         {
           type: "object",

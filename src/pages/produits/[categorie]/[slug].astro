@@ -1,0 +1,176 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import SanityImage from "../../../components/SanityImage.astro";
+import { PortableText } from "astro-portabletext";
+import {
+  getAllProductSlugs,
+  getPageBySlug,
+  getProductBySlug,
+} from "../../../lib/sanity";
+import { stegaClean } from "@sanity/client/stega";
+
+export async function getStaticPaths() {
+  const { data: products } = await getAllProductSlugs();
+  return (products ?? [])
+    .filter((p) => p.slug && p.categorie)
+    .map((p) => ({
+      params: { categorie: p.categorie, slug: p.slug },
+    }));
+}
+
+const { categorie, slug } = Astro.params;
+const { data: product } = await getProductBySlug(slug!);
+const { data: productTemplatePage } = await getPageBySlug("produits-produit");
+
+if (!product || product.category?.slug !== categorie) {
+  return Astro.redirect("/produits");
+}
+
+const images = product.images ?? [];
+const mainImage = images[0];
+---
+
+<Layout title={`${product.name} - Fidéloc`}>
+  <section class="mx-auto max-w-4xl px-6 py-16">
+    <!-- Breadcrumb -->
+    <nav class="text-muted-foreground mb-8 text-sm">
+      <a href="/produits" class="text-brand-accent hover:underline">
+        {stegaClean(productTemplatePage?.labels?.breadcrumbCatalogLabel ?? "")}
+      </a>
+      <span class="mx-2">/</span>
+      <a
+        href={`/produits/${categorie}`}
+        class="text-brand-accent hover:underline"
+      >
+        {product.category?.name}
+      </a>
+      <span class="mx-2">/</span>
+      <span>{product.name}</span>
+    </nav>
+
+    <!-- Product hero -->
+    <div class="grid gap-8 md:grid-cols-2">
+      <!-- Images -->
+      <div>
+        {
+          mainImage && (
+            <SanityImage
+              image={mainImage}
+              width={800}
+              class="border-border w-full rounded-lg border"
+              loading="eager"
+            />
+          )
+        }
+        {
+          images.length > 1 && (
+            <div class="mt-4 flex gap-3">
+              {images.map((img) => (
+                <SanityImage
+                  image={img}
+                  width={120}
+                  class="border-border h-16 w-16 rounded-md border object-cover"
+                />
+              ))}
+            </div>
+          )
+        }
+      </div>
+
+      <!-- Info -->
+      <div>
+        <h1 class="font-heading text-primary text-3xl font-bold tracking-tight">
+          {product.name}
+        </h1>
+
+        {
+          product.code && (
+            <p class="text-muted-foreground mt-1 text-sm">
+              {stegaClean(productTemplatePage?.labels?.productCodeLabel ?? "")}{" "}
+              : {product.code}
+            </p>
+          )
+        }
+
+        <!-- Specs -->
+        <dl class="text-muted-foreground mt-6 space-y-2 text-sm">
+          {
+            product.dimensions && (
+              <div class="flex gap-2">
+                <dt class="font-medium">
+                  {stegaClean(
+                    productTemplatePage?.labels?.specDimensionsLabel ?? "",
+                  )}{" "}
+                  :
+                </dt>
+                <dd>{product.dimensions}</dd>
+              </div>
+            )
+          }
+          {
+            product.capacity && (
+              <div class="flex gap-2">
+                <dt class="font-medium">
+                  {stegaClean(
+                    productTemplatePage?.labels?.specCapacityLabel ?? "",
+                  )}{" "}
+                  :
+                </dt>
+                <dd>
+                  {product.capacity}{" "}
+                  {stegaClean(productTemplatePage?.labels?.capacityUnit ?? "")}
+                </dd>
+              </div>
+            )
+          }
+        </dl>
+
+        <!-- Pricing -->
+        <div class="border-border mt-6 rounded-lg border p-4">
+          <p class="text-primary text-lg font-semibold">
+            {product.priceWeekend} €
+            <span class="text-muted-foreground text-sm font-normal">
+              {
+                stegaClean(
+                  productTemplatePage?.labels?.priceWeekendSuffix ?? "",
+                )
+              }
+            </span>
+          </p>
+          <p class="text-muted-foreground text-sm">
+            {product.priceWeek} €{" "}
+            {stegaClean(productTemplatePage?.labels?.priceWeekSuffix ?? "")}
+          </p>
+        </div>
+
+        <!-- CTA -->
+        <a
+          href={`/contact?produit=${encodeURIComponent(product.name ?? "")}`}
+          class="bg-brand-accent mt-6 inline-block rounded-md px-6 py-3 text-sm font-medium text-white transition-colors hover:opacity-90"
+        >
+          {stegaClean(productTemplatePage?.labels?.quoteCtaLabel ?? "")}
+        </a>
+      </div>
+    </div>
+
+    <!-- Description -->
+    {
+      product.description && (
+        <div class="mt-12 [&_a]:underline [&_h2]:mt-6 [&_h2]:text-xl [&_h2]:font-semibold [&_p]:mt-4 [&_p]:leading-7 [&_ul]:mt-2 [&_ul]:list-disc [&_ul]:pl-6">
+          <PortableText value={product.description} />
+        </div>
+      )
+    }
+
+    <!-- Back link -->
+    <a
+      href={`/produits/${categorie}`}
+      class="text-brand-accent mt-12 inline-block text-sm hover:underline"
+    >
+      &larr; {
+        stegaClean(productTemplatePage?.labels?.backToCategoryPrefix ?? "")
+      }{" "}
+      {product.category?.name}
+    </a>
+  </section>
+</Layout>

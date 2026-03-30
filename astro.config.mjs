@@ -1,7 +1,7 @@
 // @ts-check
 import { defineConfig, fontProviders } from "astro/config";
 
-import vercel from '@astrojs/vercel';
+import vercel from "@astrojs/vercel";
 import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
 import { loadEnv } from "vite";
@@ -12,7 +12,7 @@ const env = loadEnv(process.env.NODE_ENV ?? "development", process.cwd(), "");
 
 // https://astro.build/config
 export default defineConfig({
-  output: 'server',
+  output: "server",
   adapter: vercel(),
   integrations: [
     react(),
@@ -21,8 +21,11 @@ export default defineConfig({
       // https://docs.astro.build/en/guides/environment-variables/#in-the-astro-config-file
       projectId: env.PUBLIC_SANITY_PROJECT_ID,
       dataset: env.PUBLIC_SANITY_DATASET,
-      useCdn: false,
-      studioBasePath: '/studio'
+      useCdn: true,
+      studioBasePath: "/studio",
+      stega: {
+        studioUrl: "/studio",
+      },
     }),
   ],
 
@@ -43,5 +46,15 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      include: [
+        "react/compiler-runtime",
+        "lodash/isObject.js",
+        "lodash/groupBy.js",
+        "lodash/keyBy.js",
+        "lodash/partition.js",
+        "lodash/sortedIndex.js",
+      ],
+    },
   },
 });

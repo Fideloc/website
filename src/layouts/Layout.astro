@@ -1,5 +1,6 @@
 ---
 import { Font } from "astro:assets";
+import { VisualEditing } from "@sanity/astro/visual-editing";
 import "../styles/global.css";
 import { getSiteSettings } from "../lib/sanity";
 import LogoBlack from "../assets/logo-black.svg";
@@ -9,7 +10,9 @@ interface Props {
 }
 
 const { title = "Fidéloc" } = Astro.props;
-const settings = await getSiteSettings();
+const visualEditingEnabled =
+  import.meta.env.PUBLIC_SANITY_VISUAL_EDITING_ENABLED === "true";
+const { data: settings } = await getSiteSettings();
 const navLinks = settings?.navigation ?? [];
 const footerLinks = settings?.footerLinks ?? [];
 const currentPath = Astro.url.pathname;
@@ -62,7 +65,7 @@ const currentPath = Astro.url.pathname;
       </div>
     </header>
 
-    <main class="flex-1">
+    <main class="flex-1 overflow-x-clip">
       <slot />
     </main>
 
@@ -90,13 +93,12 @@ const currentPath = Astro.url.pathname;
         </nav>
       </div>
     </footer>
+    <VisualEditing enabled={visualEditingEnabled} />
   </body>
 </html>
 
 <style>
-  html,
-  body {
+  html {
     margin: 0;
-    width: 100%;
   }
 </style>

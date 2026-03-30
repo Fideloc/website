@@ -19,6 +19,19 @@ export const categoryType = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "image",
+      title: "Image",
+      type: "image",
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: "alt",
+          title: "Texte alternatif",
+          type: "string",
+        }),
+      ],
+    }),
+    defineField({
       name: "description",
       title: "Description",
       type: "text",
@@ -44,6 +57,6 @@ export const categoryType = defineType({
     },
   ],
   preview: {
-    select: { title: "name", subtitle: "description" },
+    select: { title: "name", subtitle: "description", media: "image" },
   },
 });

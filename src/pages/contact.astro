@@ -2,27 +2,35 @@
 export const prerender = false;
 
 import Layout from "../layouts/Layout.astro";
-import { getSiteSettings, getAllCategories } from "../lib/sanity";
+import {
+  getSiteSettings,
+  getAllCategories,
+  getPageBySlug,
+} from "../lib/sanity";
 import ContactForm from "../components/ContactForm";
+import { stegaClean } from "@sanity/client/stega";
 
-const settings = await getSiteSettings();
-const categories = await getAllCategories();
+const { data: settings } = await getSiteSettings();
+const { data: categories } = await getAllCategories();
+const { data: page } = await getPageBySlug("contact");
 ---
 
-<Layout title="Contact — Fidéloc">
+<Layout title={page?.title ? `${page.title} - Fidéloc` : ""}>
   <section class="mx-auto max-w-3xl px-6 py-16">
     <h1 class="font-heading text-primary text-4xl font-bold tracking-tight">
-      Contactez-nous
+      {stegaClean(page?.title ?? "")}
     </h1>
     <p class="text-muted-foreground mt-2">
-      Pour toute demande de devis ou d'information.
+      {stegaClean(page?.intro ?? "")}
     </p>
 
     <div class="mt-10 space-y-4">
       {
         settings?.phone && (
           <div>
-            <p class="text-sm font-medium">Téléphone</p>
+            <p class="text-sm font-medium">
+              {stegaClean(page?.labels?.phoneLabel ?? "")}
+            </p>
             <a
               href={`tel:${settings.phone}`}
               class="text-brand-accent hover:underline"
@@ -35,7 +43,9 @@ const categories = await getAllCategories();
       {
         settings?.email && (
           <div>
-            <p class="text-sm font-medium">Email</p>
+            <p class="text-sm font-medium">
+              {stegaClean(page?.labels?.emailLabel ?? "")}
+            </p>
             <a
               href={`mailto:${settings.email}`}
               class="text-brand-accent hover:underline"
@@ -48,7 +58,9 @@ const categories = await getAllCategories();
       {
         settings?.serviceArea && (
           <div>
-            <p class="text-sm font-medium">Zone de service</p>
+            <p class="text-sm font-medium">
+              {stegaClean(page?.labels?.serviceAreaLabel ?? "")}
+            </p>
             <p class="text-muted-foreground">{settings.serviceArea}</p>
           </div>
         )
@@ -57,7 +69,7 @@ const categories = await getAllCategories();
 
     <div class="mt-12">
       <h2 class="font-heading text-primary mb-6 text-2xl font-semibold">
-        Demande de réservation
+        {stegaClean(page?.labels?.reservationTitle ?? "")}
       </h2>
       <ContactForm
         client:load

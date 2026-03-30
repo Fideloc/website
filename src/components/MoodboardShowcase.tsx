@@ -65,7 +65,7 @@ const categories = [
   { icon: IconLuggage, name: "Voyage", desc: "Remorques, porte-vélos" },
 ];
 
-const emailSchema = z.string().email();
+const emailSchema = z.email();
 
 function EmailField() {
   const [value, setValue] = useState("");
@@ -344,7 +344,7 @@ export default function MoodboardShowcase() {
             <span className="text-brand-accent">sans l'acheter.</span>
           </h2>
           <p className="mx-auto mt-6 max-w-lg text-base text-white/70">
-            Mobilier, son & image, plein air, divertissement — Fidéloc met à
+            Mobilier, son & image, plein air, divertissement - Fidéloc met à
             votre disposition un catalogue complet pour vos événements et
             projets.
           </p>

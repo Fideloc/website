@@ -1,18 +1,18 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { getAllCategories } from "../../lib/sanity";
+import { getAllCategories, getPageBySlug } from "../../lib/sanity";
+import { stegaClean } from "@sanity/client/stega";
 
-const categories = await getAllCategories();
+const { data: categories } = await getAllCategories();
+const { data: page } = await getPageBySlug("produits");
 ---
 
-<Layout title="Nos produits — Fidéloc">
+<Layout title={page?.title ? `${page.title} - Fidéloc` : ""}>
   <section class="mx-auto max-w-4xl px-6 py-16">
     <h1 class="font-heading text-primary text-4xl font-bold tracking-tight">
-      Nos produits
+      {stegaClean(page?.title ?? "")}
     </h1>
-    <p class="text-muted-foreground mt-2">
-      Parcourez nos catégories d'équipements en location.
-    </p>
+    <p class="text-muted-foreground mt-2">{stegaClean(page?.intro ?? "")}</p>
   </section>
 
   <section class="mx-auto max-w-4xl px-6 pb-16">
@@ -38,7 +38,9 @@ const categories = await getAllCategories();
           ))}
         </ul>
       ) : (
-        <p class="text-muted-foreground">Aucune catégorie pour le moment.</p>
+        <p class="text-muted-foreground">
+          {stegaClean(page?.labels?.emptyState ?? "")}
+        </p>
       )
     }
   </section>

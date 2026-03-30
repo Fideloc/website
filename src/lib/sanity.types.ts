@@ -12,6 +12,8 @@
  * ---------------------------------------------------------------------------------
  */
 
+export declare const internalGroqTypeReferenceTo: unique symbol;
+
 // Source: schema.json
 export type PageReference = {
   _ref: string;
@@ -31,7 +33,11 @@ export type SiteSettings = {
   phone?: string;
   email?: string;
   serviceArea?: string;
-  heroCta?: string;
+  heroHeadline?: string;
+  heroHeadlineAccent?: string;
+  heroDescription?: string;
+  heroPrimaryCta?: string;
+  heroSecondaryCta?: string;
   navigation?: Array<{
     label?: string;
     page?: PageReference;
@@ -54,6 +60,15 @@ export type Page = {
   _rev: string;
   title?: string;
   slug?: Slug;
+  template?:
+    | "standard"
+    | "home"
+    | "contact"
+    | "productsIndex"
+    | "productCategory"
+    | "productDetail"
+    | "moodboard";
+  intro?: string;
   content?: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -72,6 +87,24 @@ export type Page = {
     _type: "block";
     _key: string;
   }>;
+  labels?: {
+    sectionTitle?: string;
+    backLabel?: string;
+    reservationTitle?: string;
+    phoneLabel?: string;
+    emailLabel?: string;
+    serviceAreaLabel?: string;
+    emptyState?: string;
+    breadcrumbCatalogLabel?: string;
+    specDimensionsLabel?: string;
+    productCodeLabel?: string;
+    specCapacityLabel?: string;
+    capacityUnit?: string;
+    priceWeekendSuffix?: string;
+    priceWeekSuffix?: string;
+    quoteCtaLabel?: string;
+    backToCategoryPrefix?: string;
+  };
 };
 
 export type Slug = {
@@ -162,6 +195,14 @@ export type Category = {
   _rev: string;
   name?: string;
   slug?: Slug;
+  image?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+  };
   description?: string;
   order?: number;
 };
@@ -283,18 +324,20 @@ export type AllSanitySchemaTypes =
   | SanityImageAsset
   | Geopoint;
 
-export declare const internalGroqTypeReferenceTo: unique symbol;
-
 // Source: src/lib/sanity.queries.ts
 // Variable: SITE_SETTINGS_QUERY
-// Query: *[_type == "siteSettings"][0]{  companyName, slogan, phone, email, serviceArea, heroCta,  navigation[]{ _key, label, url, page->{ title, "slug": slug.current } },  footerLinks[]{ _key, label, url, page->{ title, "slug": slug.current } }}
+// Query: *[_type == "siteSettings"][0]{  companyName, slogan, phone, email, serviceArea,  heroHeadline, heroHeadlineAccent, heroDescription, heroPrimaryCta, heroSecondaryCta,  navigation[]{ _key, label, url, page->{ title, "slug": slug.current } },  footerLinks[]{ _key, label, url, page->{ title, "slug": slug.current } }}
 export type SITE_SETTINGS_QUERY_RESULT = {
   companyName: string | null;
   slogan: string | null;
   phone: string | null;
   email: string | null;
   serviceArea: string | null;
-  heroCta: string | null;
+  heroHeadline: string | null;
+  heroHeadlineAccent: string | null;
+  heroDescription: string | null;
+  heroPrimaryCta: string | null;
+  heroSecondaryCta: string | null;
   navigation: Array<{
     _key: string;
     label: string | null;
@@ -317,13 +360,19 @@ export type SITE_SETTINGS_QUERY_RESULT = {
 
 // Source: src/lib/sanity.queries.ts
 // Variable: ALL_CATEGORIES_QUERY
-// Query: *[_type == "category"] | order(order asc){  _id, name, "slug": slug.current, description, order}
+// Query: *[_type == "category"] | order(order asc){  _id, name, "slug": slug.current, description, order, image{ asset, alt, hotspot, crop }}
 export type ALL_CATEGORIES_QUERY_RESULT = Array<{
   _id: string;
   name: string | null;
   slug: string | null;
   description: string | null;
   order: number | null;
+  image: {
+    asset: SanityImageAssetReference | null;
+    alt: string | null;
+    hotspot: SanityImageHotspot | null;
+    crop: SanityImageCrop | null;
+  } | null;
 }>;
 
 // Source: src/lib/sanity.queries.ts
@@ -373,12 +422,92 @@ export type PRODUCTS_BY_CATEGORY_QUERY_RESULT = Array<{
 }>;
 
 // Source: src/lib/sanity.queries.ts
+// Variable: PRODUCT_BY_SLUG_QUERY
+// Query: *[_type == "product" && slug.current == $slug][0]{  _id, name, code, "slug": slug.current,  category->{ _id, name, "slug": slug.current },  images[]{ asset, alt, hotspot, crop, _key },  description, dimensions, capacity, priceWeek, priceWeekend}
+export type PRODUCT_BY_SLUG_QUERY_RESULT = {
+  _id: string;
+  name: string | null;
+  code: string | null;
+  slug: string | null;
+  category: {
+    _id: string;
+    name: string | null;
+    slug: string | null;
+  } | null;
+  images: Array<{
+    asset: SanityImageAssetReference | null;
+    alt: string | null;
+    hotspot: SanityImageHotspot | null;
+    crop: SanityImageCrop | null;
+    _key: string;
+  }> | null;
+  description: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }> | null;
+  dimensions: string | null;
+  capacity: number | null;
+  priceWeek: number | null;
+  priceWeekend: number | null;
+} | null;
+
+// Source: src/lib/sanity.queries.ts
+// Variable: ALL_PRODUCT_SLUGS_QUERY
+// Query: *[_type == "product"]{  "slug": slug.current, "categorie": category->slug.current}
+export type ALL_PRODUCT_SLUGS_QUERY_RESULT = Array<{
+  slug: string | null;
+  categorie: string | null;
+}>;
+
+// Source: src/lib/sanity.queries.ts
 // Variable: PAGE_BY_SLUG_QUERY
-// Query: *[_type == "page" && slug.current == $slug][0]{  _id, title, "slug": slug.current, content}
+// Query: *[_type == "page" && slug.current == $slug][0]{  _id,  title,  "slug": slug.current,  template,  intro,  labels{    sectionTitle,    backLabel,    reservationTitle,    phoneLabel,    emailLabel,    serviceAreaLabel,    emptyState,    breadcrumbCatalogLabel,    specDimensionsLabel,    productCodeLabel,    specCapacityLabel,    capacityUnit,    priceWeekendSuffix,    priceWeekSuffix,    quoteCtaLabel,    backToCategoryPrefix  },  content}
 export type PAGE_BY_SLUG_QUERY_RESULT = {
   _id: string;
   title: string | null;
   slug: string | null;
+  template:
+    | "contact"
+    | "home"
+    | "moodboard"
+    | "productCategory"
+    | "productDetail"
+    | "productsIndex"
+    | "standard"
+    | null;
+  intro: string | null;
+  labels: {
+    sectionTitle: string | null;
+    backLabel: string | null;
+    reservationTitle: string | null;
+    phoneLabel: string | null;
+    emailLabel: string | null;
+    serviceAreaLabel: string | null;
+    emptyState: string | null;
+    breadcrumbCatalogLabel: string | null;
+    specDimensionsLabel: string | null;
+    productCodeLabel: string | null;
+    specCapacityLabel: string | null;
+    capacityUnit: string | null;
+    priceWeekendSuffix: string | null;
+    priceWeekSuffix: string | null;
+    quoteCtaLabel: string | null;
+    backToCategoryPrefix: string | null;
+  } | null;
   content: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -403,10 +532,12 @@ export type PAGE_BY_SLUG_QUERY_RESULT = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    '*[_type == "siteSettings"][0]{\n  companyName, slogan, phone, email, serviceArea, heroCta,\n  navigation[]{ _key, label, url, page->{ title, "slug": slug.current } },\n  footerLinks[]{ _key, label, url, page->{ title, "slug": slug.current } }\n}': SITE_SETTINGS_QUERY_RESULT;
-    '*[_type == "category"] | order(order asc){\n  _id, name, "slug": slug.current, description, order\n}': ALL_CATEGORIES_QUERY_RESULT;
+    '*[_type == "siteSettings"][0]{\n  companyName, slogan, phone, email, serviceArea,\n  heroHeadline, heroHeadlineAccent, heroDescription, heroPrimaryCta, heroSecondaryCta,\n  navigation[]{ _key, label, url, page->{ title, "slug": slug.current } },\n  footerLinks[]{ _key, label, url, page->{ title, "slug": slug.current } }\n}': SITE_SETTINGS_QUERY_RESULT;
+    '*[_type == "category"] | order(order asc){\n  _id, name, "slug": slug.current, description, order, image{ asset, alt, hotspot, crop }\n}': ALL_CATEGORIES_QUERY_RESULT;
     '*[_type == "category" && slug.current == $slug][0]{\n  _id, name, "slug": slug.current, description\n}': CATEGORY_BY_SLUG_QUERY_RESULT;
     '*[_type == "product" && category._ref == $categoryId] | order(order asc){\n  _id, name, code, "slug": slug.current, dimensions, capacity,\n  priceWeek, priceWeekend, images[0]{ asset, alt }, description\n}': PRODUCTS_BY_CATEGORY_QUERY_RESULT;
-    '*[_type == "page" && slug.current == $slug][0]{\n  _id, title, "slug": slug.current, content\n}': PAGE_BY_SLUG_QUERY_RESULT;
+    '*[_type == "product" && slug.current == $slug][0]{\n  _id, name, code, "slug": slug.current,\n  category->{ _id, name, "slug": slug.current },\n  images[]{ asset, alt, hotspot, crop, _key },\n  description, dimensions, capacity, priceWeek, priceWeekend\n}': PRODUCT_BY_SLUG_QUERY_RESULT;
+    '*[_type == "product"]{\n  "slug": slug.current, "categorie": category->slug.current\n}': ALL_PRODUCT_SLUGS_QUERY_RESULT;
+    '*[_type == "page" && slug.current == $slug][0]{\n  _id,\n  title,\n  "slug": slug.current,\n  template,\n  intro,\n  labels{\n    sectionTitle,\n    backLabel,\n    reservationTitle,\n    phoneLabel,\n    emailLabel,\n    serviceAreaLabel,\n    emptyState,\n    breadcrumbCatalogLabel,\n    specDimensionsLabel,\n    productCodeLabel,\n    specCapacityLabel,\n    capacityUnit,\n    priceWeekendSuffix,\n    priceWeekSuffix,\n    quoteCtaLabel,\n    backToCategoryPrefix\n  },\n  content\n}': PAGE_BY_SLUG_QUERY_RESULT;
   }
 }

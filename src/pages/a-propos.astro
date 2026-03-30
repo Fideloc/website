@@ -3,13 +3,13 @@ import Layout from "../layouts/Layout.astro";
 import { PortableText } from "astro-portabletext";
 import { getPageBySlug } from "../lib/sanity";
 
-const page = await getPageBySlug("a-propos");
+const { data: page } = await getPageBySlug("a-propos");
 ---
 
-<Layout title={page?.title ? `${page.title} — Fidéloc` : "À propos — Fidéloc"}>
+<Layout title={page?.title ? `${page.title} - Fidéloc` : ""}>
   <section class="mx-auto max-w-3xl px-6 py-16">
     <h1 class="font-heading text-primary text-4xl font-bold tracking-tight">
-      {page?.title ?? "À propos"}
+      {page?.title ?? ""}
     </h1>
     {
       page?.content ? (
@@ -17,7 +17,7 @@ const page = await getPageBySlug("a-propos");
           <PortableText value={page.content} />
         </div>
       ) : (
-        <p class="text-muted-foreground mt-8">Contenu à venir.</p>
+        <p class="text-muted-foreground mt-8" />
       )
     }
   </section>
