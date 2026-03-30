@@ -10,8 +10,6 @@ interface Props {
 }
 
 const { title = "Fidéloc" } = Astro.props;
-const visualEditingEnabled =
-  import.meta.env.PUBLIC_SANITY_VISUAL_EDITING_ENABLED === "true";
 const { data: settings } = await getSiteSettings();
 const navLinks = settings?.navigation ?? [];
 const footerLinks = settings?.footerLinks ?? [];
@@ -93,7 +91,7 @@ const currentPath = Astro.url.pathname;
         </nav>
       </div>
     </footer>
-    <VisualEditing enabled={visualEditingEnabled} />
+    <VisualEditing enabled={true} />
   </body>
 </html>
 

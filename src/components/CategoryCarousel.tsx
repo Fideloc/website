@@ -2,6 +2,8 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
 } from "@/components/ui/carousel";
 
 interface CategoryItem {
@@ -62,6 +64,15 @@ export default function CategoryCarousel({
           </CarouselItem>
         ))}
       </CarouselContent>
+
+      <CarouselPrevious
+        variant="secondary"
+        className="left-2 opacity-0 transition-opacity duration-300 group-hover/carousel:opacity-100 disabled:pointer-events-none disabled:opacity-0"
+      />
+      <CarouselNext
+        variant="secondary"
+        className="right-2 opacity-0 transition-opacity duration-300 group-hover/carousel:opacity-100 disabled:pointer-events-none disabled:opacity-0"
+      />
     </Carousel>
   );
 }
