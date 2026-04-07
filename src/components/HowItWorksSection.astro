@@ -1,62 +1,59 @@
 ---
-import { IconArrowRight } from "@tabler/icons-react";
+import { stegaClean } from "@sanity/client/stega";
+import ArrowLink from "./ArrowLink.astro";
 
-const steps = [
-  {
-    number: "01",
-    title: "Choisissez",
-    description:
-      "Parcourez notre catalogue et selectionnez l'equipement adapte a votre projet.",
-  },
-  {
-    number: "02",
-    title: "Contactez-nous",
-    description:
-      "Appelez ou envoyez-nous un message pour reserver et preciser vos besoins.",
-  },
-  {
-    number: "03",
-    title: "On livre",
-    description:
-      "L'equipement est livre sur votre chantier, pret a l'emploi. Simple et rapide.",
-  },
-];
+interface Step {
+  number?: string | null;
+  title?: string | null;
+  description?: string | null;
+}
+
+interface Props {
+  title?: string | null;
+  contactLabel?: string | null;
+  steps?: Step[] | null;
+}
+
+const { title, contactLabel, steps } = Astro.props;
+
+const cleanTitle = stegaClean(title ?? "");
+const cleanContactLabel = stegaClean(contactLabel ?? "");
+const cleanSteps = (steps ?? []).map((step) => ({
+  number: stegaClean(step?.number ?? ""),
+  title: stegaClean(step?.title ?? ""),
+  description: stegaClean(step?.description ?? ""),
+}));
 ---
 
-<section class="mx-auto max-w-7xl px-4 py-20 md:px-8">
-  <div class="mb-10 flex items-baseline justify-between">
-    <h2 class="font-heading text-primary text-2xl font-semibold md:text-3xl">
-      Comment ca marche
-    </h2>
-    <a
-      href="/contact"
-      class="text-primary group hover:text-brand-accent flex items-center gap-1 text-sm font-medium transition-colors"
-    >
-      Nous contacter
-      <IconArrowRight
-        size={14}
-        className="transition-transform group-hover:translate-x-0.5"
-      />
-    </a>
-  </div>
+{
+  cleanSteps.length > 0 && (
+    <section class="mx-auto max-w-7xl px-4 py-20 md:px-8">
+      <div class="mb-10 flex items-baseline justify-between">
+        <h2 class="font-heading text-primary text-2xl font-semibold md:text-3xl">
+          {cleanTitle}
+        </h2>
+        {cleanContactLabel && (
+          <ArrowLink href="/contact">{cleanContactLabel}</ArrowLink>
+        )}
+      </div>
 
-  <div class="grid gap-6 md:grid-cols-3">
-    {
-      steps.map((step) => (
-        <div class="flex gap-5">
-          <div class="border-border text-primary flex h-12 w-12 shrink-0 items-center justify-center rounded-full border text-sm font-semibold">
-            {step.number}
+      <div class="grid gap-6 md:grid-cols-3">
+        {cleanSteps.map((step) => (
+          <div class="flex gap-5">
+            <div class="border-border text-primary flex h-12 w-12 shrink-0 items-center justify-center rounded-full border text-sm font-semibold">
+              {step.number}
+            </div>
+            <div>
+              <h2 class="font-heading text-primary text-lg font-semibold">
+                {step.title}
+              </h2>
+              <p class="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+                {step.description}
+              </p>
+            </div>
           </div>
-          <div>
-            <h2 class="font-heading text-primary text-lg font-semibold">
-              {step.title}
-            </h2>
-            <p class="text-muted-foreground mt-1.5 text-sm leading-relaxed">
-              {step.description}
-            </p>
-          </div>
-        </div>
-      ))
-    }
-  </div>
-</section>
+        ))}
+      </div>
+    </section>
+  )
+}

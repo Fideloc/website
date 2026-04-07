@@ -1,4 +1,5 @@
 ---
+import { stegaClean } from "@sanity/client/stega";
 import type {
   SITE_SETTINGS_QUERY_RESULT,
   ALL_CATEGORIES_QUERY_RESULT,
@@ -11,36 +12,23 @@ type NavLink = NonNullable<
 interface Props {
   categories: ALL_CATEGORIES_QUERY_RESULT;
   navLinks: NavLink[];
+  footerLinks: NavLink[];
   settings: SITE_SETTINGS_QUERY_RESULT;
+  currentPath: string;
 }
 
-const { categories, navLinks, settings } = Astro.props;
+const { categories, navLinks, footerLinks, settings, currentPath } =
+  Astro.props;
+
+const phone = stegaClean(settings?.phone ?? "");
+const serviceArea = stegaClean(settings?.serviceArea ?? "");
 ---
 
 <div
   id="mobile-menu"
-  class="bg-background fixed inset-0 z-[60] hidden flex-col overflow-y-auto px-6 pt-20 pb-6 lg:hidden"
+  class="bg-background pointer-events-none fixed inset-x-0 top-16 bottom-0 z-[60] flex flex-col overflow-y-auto opacity-0 transition-opacity duration-200 ease-out lg:hidden"
 >
-  <button
-    id="mobile-menu-close"
-    class="text-foreground absolute top-4 right-6 p-2"
-    aria-label="Fermer"
-  >
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-    >
-      <line x1="18" y1="6" x2="6" y2="18"></line>
-      <line x1="6" y1="6" x2="18" y2="18"></line>
-    </svg>
-  </button>
-
-  <nav class="mb-8">
+  <nav class="px-6 pt-8 pb-6">
     <p
       class="text-muted-foreground mb-4 text-[11px] font-semibold tracking-widest uppercase"
     >
@@ -48,33 +36,24 @@ const { categories, navLinks, settings } = Astro.props;
     </p>
     <ul class="space-y-3">
       {
-        (categories ?? []).map((cat) => (
-          <li>
-            <a
-              href={`/produits/${cat.slug}`}
-              class="font-heading text-foreground hover:text-brand-accent text-lg transition-colors"
-            >
-              {cat.name}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </nav>
-
-  <nav class="mb-8">
-    <ul class="space-y-3">
-      {
-        navLinks.map((link) => {
-          const href =
-            link.url || (link.page?.slug ? `/${link.page.slug}` : "/");
+        (categories ?? []).map((cat) => {
+          const slug = stegaClean(cat.slug ?? "");
+          const name = stegaClean(cat.name ?? "");
+          const catHref = `/produits/${slug}`;
+          const isActive =
+            currentPath === catHref || currentPath.startsWith(catHref + "/");
           return (
             <li>
               <a
-                href={href}
-                class="text-foreground hover:text-brand-accent text-base transition-colors"
+                href={catHref}
+                class:list={[
+                  "font-heading text-lg font-medium transition-colors",
+                  isActive
+                    ? "text-brand-accent"
+                    : "text-foreground hover:text-brand-accent",
+                ]}
               >
-                {link.label}
+                {name}
               </a>
             </li>
           );
@@ -83,21 +62,77 @@ const { categories, navLinks, settings } = Astro.props;
     </ul>
   </nav>
 
-  {
-    settings?.phone && (
-      <div class="mt-auto">
-        <p class="text-muted-foreground mb-2 text-[11px] font-semibold tracking-widest uppercase">
-          Contact
-        </p>
-        <a href={`tel:${settings.phone}`} class="text-foreground text-sm">
-          {settings.phone}
+  <div class="min-h-4 flex-1"></div>
+
+  <div class="border-border bg-muted border-t px-6 pt-6 pb-6">
+    <p
+      class="text-muted-foreground mb-3 text-[11px] font-semibold tracking-widest uppercase"
+    >
+      Contact
+    </p>
+    {
+      phone && (
+        <a
+          href={`tel:${phone}`}
+          class="text-foreground hover:text-brand-accent block text-sm transition-colors"
+        >
+          {phone}
         </a>
-        {settings?.serviceArea && (
-          <p class="text-muted-foreground mt-1 text-sm">
-            {settings.serviceArea}
-          </p>
-        )}
-      </div>
-    )
-  }
+      )
+    }
+    {serviceArea && <p class="text-foreground mt-1 text-sm">{serviceArea}</p>}
+  </div>
+
+  <nav class="border-border border-t px-6 pt-6 pb-4">
+    <ul class="space-y-3">
+      {
+        navLinks.map((link) => {
+          const url = stegaClean(link.url ?? "");
+          const slug = stegaClean(link.page?.slug ?? "");
+          const href = url || (slug ? `/${slug}` : "/");
+          const isActive = currentPath === href;
+          return (
+            <li>
+              <a
+                href={href}
+                class:list={[
+                  "text-base font-medium transition-colors",
+                  isActive
+                    ? "text-brand-accent"
+                    : "text-foreground hover:text-brand-accent",
+                ]}
+              >
+                {stegaClean(link.label ?? "")}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </nav>
+
+  <div class="border-border border-t px-6 pt-4 pb-6">
+    <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+      {
+        footerLinks.map((link, i) => {
+          const url = stegaClean(link.url ?? "");
+          const slug = stegaClean(link.page?.slug ?? "");
+          const href = url || (slug ? `/${slug}` : "/");
+          return (
+            <>
+              <a
+                href={href}
+                class="text-muted-foreground hover:text-foreground text-xs transition-colors"
+              >
+                {stegaClean(link.label ?? "")}
+              </a>
+              {i < footerLinks.length - 1 && (
+                <span class="text-muted-foreground text-xs">&middot;</span>
+              )}
+            </>
+          );
+        })
+      }
+    </div>
+  </div>
 </div>

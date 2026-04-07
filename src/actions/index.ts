@@ -14,13 +14,26 @@ export const server = {
         return { success: true };
       }
 
-      // Validate date range
-      if (input.dateEnd < input.dateStart) {
+      // Validate date range (only if both dates are provided)
+      if (input.dateStart && input.dateEnd && input.dateEnd < input.dateStart) {
         throw new ActionError({
           code: "BAD_REQUEST",
           message: "La date de fin doit être après la date de début.",
         });
       }
+
+      const categoryDisplay = input.category || "Non précisée";
+      const periodDisplay =
+        input.dateStart && input.dateEnd
+          ? `Du ${input.dateStart} au ${input.dateEnd}`
+          : input.dateStart
+            ? `À partir du ${input.dateStart}`
+            : input.dateEnd
+              ? `Jusqu'au ${input.dateEnd}`
+              : "Non précisée";
+      const deliveryDisplay = input.delivery
+        ? "Oui (forfait 30 € + 0,90 €/km aller-retour)"
+        : "Non (retrait par le client)";
 
       const html = `
 <!DOCTYPE html>
@@ -57,13 +70,19 @@ export const server = {
           <tr>
             <td style="padding:8px 0;border-bottom:1px solid #eef1f5">
               <strong style="color:#1a2b4a">Catégorie</strong><br>
-              <span style="color:#1e293b">${input.category}</span>
+              <span style="color:#1e293b">${categoryDisplay}</span>
             </td>
           </tr>
           <tr>
             <td style="padding:8px 0;border-bottom:1px solid #eef1f5">
               <strong style="color:#1a2b4a">Période</strong><br>
-              <span style="color:#1e293b">Du ${input.dateStart} au ${input.dateEnd}</span>
+              <span style="color:#1e293b">${periodDisplay}</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0;border-bottom:1px solid #eef1f5">
+              <strong style="color:#1a2b4a">Livraison & récupération</strong><br>
+              <span style="color:#1e293b">${deliveryDisplay}</span>
             </td>
           </tr>
           ${
@@ -100,7 +119,7 @@ export const server = {
         from: `Fidéloc <${settings.email}>`,
         to: [settings.email],
         replyTo: input.email,
-        subject: `Nouvelle demande - ${input.category}`,
+        subject: `Nouvelle demande${input.category ? ` - ${input.category}` : ""}`,
         html,
       });
 

@@ -10,10 +10,13 @@ export const contactSchema = z.object({
       /^(?:\+33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/,
       "Format de téléphone invalide (ex : 06 12 34 56 78 ou +33 6 12 34 56 78).",
     ),
-  category: z.string().min(1, "Veuillez sélectionner une catégorie."),
-  dateStart: z.string().min(1, "Veuillez indiquer une date de début."),
-  dateEnd: z.string().min(1, "Veuillez indiquer une date de fin."),
-  message: z.string().optional(),
+  category: z.string().optional(),
+  dateStart: z.string().optional(),
+  dateEnd: z.string().optional(),
+  delivery: z.boolean().optional(),
+  message: z
+    .string()
+    .min(10, "Merci de préciser votre besoin (10 caractères minimum)."),
   website: z.string().max(0).optional(),
 });
 

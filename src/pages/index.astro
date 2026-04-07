@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { stegaClean } from "@sanity/client/stega";
 import {
   getSiteSettings,
   getAllCategories,
@@ -16,6 +17,42 @@ const { data: settings } = await getSiteSettings();
 const { data: categories } = await getAllCategories();
 const { data: homePage } = await getPageBySlug("accueil");
 const { data: aboutPage } = await getPageBySlug("a-propos");
+
+const companyName = stegaClean(settings?.companyName ?? "");
+
+const homeLabels = homePage?.labels;
+const categoriesSectionTitle = stegaClean(homeLabels?.sectionTitle ?? "");
+const categoriesViewAllLabel = stegaClean(
+  homeLabels?.categoriesViewAllLabel ?? "",
+);
+const quoteCtaBadge = stegaClean(homeLabels?.quoteCtaBadge ?? "");
+const quoteCtaHeadlineLine1 = stegaClean(
+  homeLabels?.quoteCtaHeadlineLine1 ?? "",
+);
+const quoteCtaHeadlineLine2 = stegaClean(
+  homeLabels?.quoteCtaHeadlineLine2 ?? "",
+);
+const quoteCtaDescription = stegaClean(homeLabels?.quoteCtaDescription ?? "");
+const quoteCtaButtonLabel = stegaClean(homeLabels?.quoteCtaButtonLabel ?? "");
+const deliveryFeeLabel = stegaClean(settings?.deliveryFeeLabel ?? "");
+const deliveryFeeText = stegaClean(settings?.deliveryFeeText ?? "");
+const aboutIntro = stegaClean(aboutPage?.intro ?? "");
+const aboutHeadlineLine1 = stegaClean(
+  homeLabels?.aboutTeaserHeadlineLine1 ?? "",
+);
+const aboutHeadlineLine2 = stegaClean(
+  homeLabels?.aboutTeaserHeadlineLine2 ?? "",
+);
+const aboutSecondParagraph = stegaClean(
+  homeLabels?.aboutTeaserSecondParagraph ?? "",
+);
+const aboutBadge = stegaClean(homeLabels?.aboutTeaserBadge ?? "");
+const aboutCtaLabel = stegaClean(homeLabels?.aboutTeaserCtaLabel ?? "");
+const howItWorksTitle = stegaClean(settings?.howItWorksTitle ?? "");
+const howItWorksContactLabel = stegaClean(
+  settings?.howItWorksContactLabel ?? "",
+);
+const howItWorksSteps = settings?.howItWorksSteps ?? [];
 
 const categoryCards = (categories ?? [])
   .filter((cat): cat is typeof cat & { name: string; slug: string } =>
@@ -37,16 +74,34 @@ const categoryCards = (categories ?? [])
 ---
 
 <Layout
-  title={settings?.companyName
-    ? `${settings.companyName} - Location d'equipement`
-    : "Fideloc"}
+  title={companyName ? `${companyName} - Location d'equipement` : "Fideloc"}
 >
   <HeroSection settings={settings} />
   <CategoriesSection
-    sectionTitle={homePage?.labels?.sectionTitle}
+    sectionTitle={categoriesSectionTitle}
+    viewAllLabel={categoriesViewAllLabel}
     categories={categoryCards}
   />
-  <QuoteCta />
-  <AboutSection intro={aboutPage?.intro} />
-  <HowItWorksSection />
+  <QuoteCta
+    badge={quoteCtaBadge}
+    headlineLine1={quoteCtaHeadlineLine1}
+    headlineLine2={quoteCtaHeadlineLine2}
+    description={quoteCtaDescription}
+    buttonLabel={quoteCtaButtonLabel}
+    deliveryFeeLabel={deliveryFeeLabel}
+    deliveryFeeText={deliveryFeeText}
+  />
+  <AboutSection
+    intro={aboutIntro}
+    headlineLine1={aboutHeadlineLine1}
+    headlineLine2={aboutHeadlineLine2}
+    secondParagraph={aboutSecondParagraph}
+    badge={aboutBadge}
+    ctaLabel={aboutCtaLabel}
+  />
+  <HowItWorksSection
+    title={howItWorksTitle}
+    contactLabel={howItWorksContactLabel}
+    steps={howItWorksSteps}
+  />
 </Layout>

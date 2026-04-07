@@ -8,80 +8,140 @@ import {
   getPageBySlug,
 } from "../lib/sanity";
 import ContactForm from "../components/ContactForm";
+import HowItWorksSection from "../components/HowItWorksSection.astro";
 import { stegaClean } from "@sanity/client/stega";
+import { IconPhone, IconMail, IconMapPin } from "@tabler/icons-react";
 
 const { data: settings } = await getSiteSettings();
 const { data: categories } = await getAllCategories();
 const { data: page } = await getPageBySlug("contact");
+
+const title = stegaClean(page?.title ?? "");
+const phone = stegaClean(settings?.phone ?? "");
+const email = stegaClean(settings?.email ?? "");
+const serviceArea = stegaClean(settings?.serviceArea ?? "");
+
+const formLabels = {
+  contactSectionTitle: stegaClean(page?.labels?.formContactSectionTitle ?? ""),
+  needSectionTitle: stegaClean(page?.labels?.formNeedSectionTitle ?? ""),
+  detailsSectionTitle: stegaClean(page?.labels?.formDetailsSectionTitle ?? ""),
+  nameLabel: stegaClean(page?.labels?.formNameLabel ?? ""),
+  namePlaceholder: stegaClean(page?.labels?.formNamePlaceholder ?? ""),
+  emailLabel: stegaClean(page?.labels?.formEmailLabel ?? ""),
+  emailPlaceholder: stegaClean(page?.labels?.formEmailPlaceholder ?? ""),
+  phoneLabel: stegaClean(page?.labels?.formPhoneLabel ?? ""),
+  phonePlaceholder: stegaClean(page?.labels?.formPhonePlaceholder ?? ""),
+  categoryLabel: stegaClean(page?.labels?.formCategoryLabel ?? ""),
+  categoryPlaceholder: stegaClean(page?.labels?.formCategoryPlaceholder ?? ""),
+  dateRangeLabel: stegaClean(page?.labels?.formDateRangeLabel ?? ""),
+  dateStartA11yLabel: stegaClean(page?.labels?.formDateStartA11yLabel ?? ""),
+  dateEndA11yLabel: stegaClean(page?.labels?.formDateEndA11yLabel ?? ""),
+  deliveryLabel: stegaClean(page?.labels?.formDeliveryLabel ?? ""),
+  deliveryDescription: stegaClean(page?.labels?.formDeliveryDescription ?? ""),
+  messageLabel: stegaClean(page?.labels?.formMessageLabel ?? ""),
+  messagePlaceholder: stegaClean(page?.labels?.formMessagePlaceholder ?? ""),
+  submitLabel: stegaClean(page?.labels?.formSubmitLabel ?? ""),
+  submitLoadingLabel: stegaClean(page?.labels?.formSubmitLoadingLabel ?? ""),
+  submitDisclaimer: stegaClean(page?.labels?.formSubmitDisclaimer ?? ""),
+  successTitle: stegaClean(page?.labels?.formSuccessTitle ?? ""),
+  successMessage: stegaClean(page?.labels?.formSuccessMessage ?? ""),
+  successNewRequestLabel: stegaClean(
+    page?.labels?.formSuccessNewRequestLabel ?? "",
+  ),
+  genericError: stegaClean(page?.labels?.formGenericError ?? ""),
+};
+
+const howItWorksTitle = stegaClean(settings?.howItWorksTitle ?? "");
+const howItWorksContactLabel = stegaClean(
+  settings?.howItWorksContactLabel ?? "",
+);
+const howItWorksSteps = settings?.howItWorksSteps ?? [];
 ---
 
-<Layout title={page?.title ? `${page.title} - Fidéloc` : ""}>
-  <section class="mx-auto max-w-7xl px-4 py-16 md:px-8">
-    <div class="grid gap-12 lg:grid-cols-5">
-      <div class="lg:col-span-2">
-        <h1 class="font-heading text-primary text-4xl font-bold tracking-tight">
-          {stegaClean(page?.title ?? "")}
-        </h1>
-        <p class="text-muted-foreground mt-2">
-          {stegaClean(page?.intro ?? "")}
-        </p>
-
-        <div class="mt-10 space-y-4">
-          {
-            settings?.phone && (
-              <div>
-                <p class="text-sm font-medium">
+<Layout title={title ? `${title} - Fidéloc` : ""}>
+  <section class="mx-auto max-w-7xl px-4 pt-16 md:px-8">
+    <div
+      class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.75fr)] lg:items-stretch lg:gap-16"
+    >
+      <aside class="flex flex-col gap-6">
+        <div class="mb-2">
+          <h1
+            class="font-heading text-primary text-4xl font-bold tracking-tight"
+          >
+            {title}
+          </h1>
+          <p class="text-muted-foreground mt-2">
+            {stegaClean(page?.intro ?? "")}
+          </p>
+        </div>
+        {
+          phone && (
+            <a
+              href={`tel:${phone}`}
+              class="bg-secondary/40 hover:bg-secondary border-border/60 flex flex-1 flex-col items-center justify-center gap-3 rounded-2xl border px-5 py-6 text-center transition-colors duration-300"
+            >
+              <IconPhone size={32} stroke={1.6} className="text-primary" />
+              <div class="min-w-0">
+                <p class="font-heading text-primary text-sm font-semibold tracking-tight">
                   {stegaClean(page?.labels?.phoneLabel ?? "")}
                 </p>
-                <a
-                  href={`tel:${settings.phone}`}
-                  class="text-brand-accent hover:underline"
-                >
-                  {settings.phone}
-                </a>
+                <p class="text-muted-foreground mt-0.5 text-sm font-medium">
+                  {phone}
+                </p>
               </div>
-            )
-          }
-          {
-            settings?.email && (
-              <div>
-                <p class="text-sm font-medium">
+            </a>
+          )
+        }
+        {
+          email && (
+            <a
+              href={`mailto:${email}`}
+              class="bg-secondary/40 hover:bg-secondary border-border/60 flex flex-1 flex-col items-center justify-center gap-3 rounded-2xl border px-5 py-6 text-center transition-colors duration-300"
+            >
+              <IconMail size={32} stroke={1.6} className="text-primary" />
+              <div class="min-w-0">
+                <p class="font-heading text-primary text-sm font-semibold tracking-tight">
                   {stegaClean(page?.labels?.emailLabel ?? "")}
                 </p>
-                <a
-                  href={`mailto:${settings.email}`}
-                  class="text-brand-accent hover:underline"
-                >
-                  {settings.email}
-                </a>
+                <p class="text-muted-foreground mt-0.5 text-sm font-medium break-all">
+                  {email}
+                </p>
               </div>
-            )
-          }
-          {
-            settings?.serviceArea && (
-              <div>
-                <p class="text-sm font-medium">
+            </a>
+          )
+        }
+        {
+          serviceArea && (
+            <div class="bg-secondary/40 border-border/60 flex flex-1 flex-col items-center justify-center gap-3 rounded-2xl border px-5 py-6 text-center">
+              <IconMapPin size={32} stroke={1.6} className="text-primary" />
+              <div class="min-w-0">
+                <p class="font-heading text-primary text-sm font-semibold tracking-tight">
                   {stegaClean(page?.labels?.serviceAreaLabel ?? "")}
                 </p>
-                <p class="text-muted-foreground">{settings.serviceArea}</p>
+                <p class="text-muted-foreground mt-0.5 text-sm font-medium">
+                  {serviceArea}
+                </p>
               </div>
-            )
-          }
-        </div>
-      </div>
+            </div>
+          )
+        }
+      </aside>
 
-      <div class="lg:col-span-3">
-        <h2 class="font-heading text-primary mb-6 text-2xl font-semibold">
-          {stegaClean(page?.labels?.reservationTitle ?? "")}
-        </h2>
+      <div class="flex flex-col">
         <ContactForm
           client:load
           categories={categories.map((c) => ({
             name: c.name ?? "",
             slug: c.slug ?? "",
           }))}
+          labels={formLabels}
         />
       </div>
     </div>
   </section>
+  <HowItWorksSection
+    title={howItWorksTitle}
+    contactLabel={howItWorksContactLabel}
+    steps={howItWorksSteps}
+  />
 </Layout>

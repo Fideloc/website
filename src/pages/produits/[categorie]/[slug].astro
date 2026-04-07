@@ -1,13 +1,16 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
-import SanityImage from "../../../components/SanityImage.astro";
 import { PortableText } from "astro-portabletext";
 import {
   getAllProductSlugs,
   getPageBySlug,
   getProductBySlug,
+  getSiteSettings,
+  urlFor,
 } from "../../../lib/sanity";
 import { stegaClean } from "@sanity/client/stega";
+import { IconArrowRight, IconTruck } from "@tabler/icons-react";
+import ArrowLink from "../../../components/ArrowLink.astro";
 
 export async function getStaticPaths() {
   const { data: products } = await getAllProductSlugs();
@@ -21,56 +24,116 @@ export async function getStaticPaths() {
 const { categorie, slug } = Astro.params;
 const { data: product } = await getProductBySlug(slug!);
 const { data: productTemplatePage } = await getPageBySlug("produits-produit");
+const { data: settings } = await getSiteSettings();
 
 if (!product || product.category?.slug !== categorie) {
   return Astro.redirect("/produits");
 }
 
-const images = product.images ?? [];
-const mainImage = images[0];
+const labels = productTemplatePage?.labels;
+const breadcrumbCatalogLabel = stegaClean(labels?.breadcrumbCatalogLabel ?? "");
+const productCodeLabel = stegaClean(labels?.productCodeLabel ?? "");
+const specDimensionsLabel = stegaClean(labels?.specDimensionsLabel ?? "");
+const specCapacityLabel = stegaClean(labels?.specCapacityLabel ?? "");
+const capacityUnit = stegaClean(labels?.capacityUnit ?? "");
+const priceWeekendSuffix = stegaClean(labels?.priceWeekendSuffix ?? "");
+const priceWeekSuffix = stegaClean(labels?.priceWeekSuffix ?? "");
+const quoteCtaLabel = stegaClean(labels?.quoteCtaLabel ?? "");
+const backToCategoryPrefix = stegaClean(labels?.backToCategoryPrefix ?? "");
+const deliveryFeeLabel = stegaClean(settings?.deliveryFeeLabel ?? "");
+const deliveryFeeText = stegaClean(settings?.deliveryFeeText ?? "");
+
+const code = stegaClean(product.code ?? "");
+const productName = stegaClean(product.name ?? "");
+const productCategoryName = stegaClean(product.category?.name ?? "");
+const dimensions = stegaClean(product.dimensions ?? "");
+const capacity = product.capacity;
+
+const galleryImages = (product.images ?? [])
+  .filter((img) => img.asset)
+  .map((img) => ({
+    key: img._key,
+    full: urlFor(img).width(1400).fit("max").auto("format").url(),
+    thumbnail: urlFor(img)
+      .width(240)
+      .height(240)
+      .fit("crop")
+      .auto("format")
+      .url(),
+    alt: stegaClean(img.alt ?? "") || productName,
+  }));
+
+const mainImage = galleryImages[0];
+const hasPricing = product.priceWeekend != null || product.priceWeek != null;
 ---
 
-<Layout title={`${product.name} - Fidéloc`}>
+<Layout title={`${productName} - Fidéloc`}>
   <section class="mx-auto max-w-7xl px-4 py-16 md:px-8">
     <!-- Breadcrumb -->
     <nav class="text-muted-foreground mb-8 text-sm">
       <a href="/produits" class="text-brand-accent hover:underline">
-        {stegaClean(productTemplatePage?.labels?.breadcrumbCatalogLabel ?? "")}
+        {breadcrumbCatalogLabel}
       </a>
       <span class="mx-2">/</span>
       <a
         href={`/produits/${categorie}`}
         class="text-brand-accent hover:underline"
       >
-        {product.category?.name}
+        {productCategoryName}
       </a>
       <span class="mx-2">/</span>
-      <span>{product.name}</span>
+      <span>{productName}</span>
     </nav>
 
-    <!-- Product hero -->
-    <div class="grid gap-8 md:grid-cols-2">
-      <!-- Images -->
+    <!-- Hero -->
+    <div class="grid gap-10 lg:grid-cols-[1.35fr_1fr] lg:gap-16">
+      <!-- Gallery -->
       <div>
+        <figure
+          class="bg-secondary/50 relative aspect-4/3 overflow-hidden rounded-2xl"
+        >
+          {
+            mainImage ? (
+              <img
+                id="product-main-image"
+                src={mainImage.full}
+                alt={mainImage.alt}
+                class="absolute inset-0 h-full w-full object-cover"
+                loading="eager"
+              />
+            ) : (
+              <div class="bg-muted absolute inset-0" />
+            )
+          }
+          {
+            code && (
+              <span class="bg-background/85 text-muted-foreground absolute top-4 left-4 rounded-full px-3 py-1.5 font-mono text-[11px] tracking-wider uppercase backdrop-blur">
+                {code}
+              </span>
+            )
+          }
+        </figure>
+
         {
-          mainImage && (
-            <SanityImage
-              image={mainImage}
-              width={800}
-              class="border-border w-full rounded-lg border"
-              loading="eager"
-            />
-          )
-        }
-        {
-          images.length > 1 && (
-            <div class="mt-4 flex gap-3">
-              {images.map((img) => (
-                <SanityImage
-                  image={img}
-                  width={120}
-                  class="border-border h-16 w-16 rounded-md border object-cover"
-                />
+          galleryImages.length > 1 && (
+            <div class="mt-4 flex flex-wrap gap-3">
+              {galleryImages.map((img, i) => (
+                <button
+                  type="button"
+                  data-gallery-thumb
+                  data-image-url={img.full}
+                  data-image-alt={img.alt}
+                  aria-pressed={i === 0 ? "true" : "false"}
+                  aria-label={img.alt}
+                  class="border-border focus-visible:ring-brand-accent/40 hover:border-primary/40 aria-pressed:border-brand-accent aria-pressed:ring-brand-accent/30 relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border transition-all outline-none focus-visible:ring-2 aria-pressed:ring-2"
+                >
+                  <img
+                    src={img.thumbnail}
+                    alt=""
+                    class="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                </button>
               ))}
             </div>
           )
@@ -78,77 +141,120 @@ const mainImage = images[0];
       </div>
 
       <!-- Info -->
-      <div>
-        <h1 class="font-heading text-primary text-3xl font-bold tracking-tight">
-          {product.name}
+      <div class="lg:pt-2">
+        {
+          productCategoryName && (
+            <p class="text-muted-foreground/80 text-[11px] tracking-[0.18em] uppercase">
+              {productCategoryName}
+            </p>
+          )
+        }
+
+        <h1
+          class="font-heading text-primary mt-3 text-4xl leading-[1.05] font-bold tracking-tight md:text-5xl"
+        >
+          {productName}
         </h1>
 
         {
-          product.code && (
-            <p class="text-muted-foreground mt-1 text-sm">
-              {stegaClean(productTemplatePage?.labels?.productCodeLabel ?? "")}{" "}
-              : {product.code}
+          code && productCodeLabel && (
+            <p class="text-muted-foreground mt-4 text-[11px] tracking-[0.12em] uppercase">
+              <span class="font-medium">{productCodeLabel}</span>
+              <span class="text-muted-foreground/60 mx-2">•</span>
+              <span class="font-mono normal-case">{code}</span>
             </p>
           )
         }
 
         <!-- Specs -->
-        <dl class="text-muted-foreground mt-6 space-y-2 text-sm">
-          {
-            product.dimensions && (
-              <div class="flex gap-2">
-                <dt class="font-medium">
-                  {stegaClean(
-                    productTemplatePage?.labels?.specDimensionsLabel ?? "",
-                  )}{" "}
-                  :
-                </dt>
-                <dd>{product.dimensions}</dd>
-              </div>
-            )
-          }
-          {
-            product.capacity && (
-              <div class="flex gap-2">
-                <dt class="font-medium">
-                  {stegaClean(
-                    productTemplatePage?.labels?.specCapacityLabel ?? "",
-                  )}{" "}
-                  :
-                </dt>
-                <dd>
-                  {product.capacity}{" "}
-                  {stegaClean(productTemplatePage?.labels?.capacityUnit ?? "")}
-                </dd>
-              </div>
-            )
-          }
-        </dl>
+        {
+          (dimensions || capacity != null) && (
+            <dl class="border-border mt-8 border-t">
+              {dimensions && (
+                <div class="border-border flex items-baseline justify-between gap-4 border-b py-3.5">
+                  <dt class="text-muted-foreground text-[11px] font-medium tracking-[0.12em] uppercase">
+                    {specDimensionsLabel}
+                  </dt>
+                  <dd class="font-heading text-primary text-sm tabular-nums">
+                    {dimensions}
+                  </dd>
+                </div>
+              )}
+              {capacity != null && (
+                <div class="border-border flex items-baseline justify-between gap-4 border-b py-3.5">
+                  <dt class="text-muted-foreground text-[11px] font-medium tracking-[0.12em] uppercase">
+                    {specCapacityLabel}
+                  </dt>
+                  <dd class="font-heading text-primary text-sm tabular-nums">
+                    {capacity} {capacityUnit}
+                  </dd>
+                </div>
+              )}
+            </dl>
+          )
+        }
 
         <!-- Pricing -->
-        <div class="border-border mt-6 rounded-lg border p-4">
-          <p class="text-primary text-lg font-semibold">
-            {product.priceWeekend} €
-            <span class="text-muted-foreground text-sm font-normal">
-              {
-                stegaClean(
-                  productTemplatePage?.labels?.priceWeekendSuffix ?? "",
-                )
-              }
-            </span>
-          </p>
-          <p class="text-muted-foreground text-sm">
-            {product.priceWeek} €{" "}
-            {stegaClean(productTemplatePage?.labels?.priceWeekSuffix ?? "")}
-          </p>
-        </div>
+        {
+          hasPricing && (
+            <div class="mt-8 tabular-nums">
+              {product.priceWeekend != null && (
+                <div class="flex items-end justify-between gap-4">
+                  <span class="text-muted-foreground pb-2 text-[11px] font-medium tracking-[0.12em] uppercase">
+                    {priceWeekendSuffix}
+                  </span>
+                  <span class="font-heading text-primary text-4xl leading-none font-bold">
+                    {product.priceWeekend}
+                    <span class="text-primary/70 ml-1 text-2xl">€</span>
+                  </span>
+                </div>
+              )}
+              {product.priceWeek != null && (
+                <div class="border-border/70 mt-4 flex items-end justify-between gap-4 border-t pt-4">
+                  <span class="text-muted-foreground/80 pb-1.5 text-[11px] font-medium tracking-[0.12em] uppercase">
+                    {priceWeekSuffix}
+                  </span>
+                  <span class="font-heading text-muted-foreground text-2xl leading-none font-semibold">
+                    {product.priceWeek}
+                    <span class="text-muted-foreground/70 ml-1 text-lg">€</span>
+                  </span>
+                </div>
+              )}
+            </div>
+          )
+        }
+
+        <!-- Delivery info -->
+        {
+          deliveryFeeText && (
+            <div class="border-border/60 bg-secondary/30 mt-8 flex items-start gap-2.5 rounded-lg border px-3.5 py-2.5">
+              <IconTruck
+                size={16}
+                stroke={1.6}
+                className="text-muted-foreground mt-0.5 shrink-0"
+              />
+              <p class="text-muted-foreground text-xs leading-relaxed">
+                {deliveryFeeLabel && (
+                  <span class="text-primary font-medium">
+                    {deliveryFeeLabel} ·{" "}
+                  </span>
+                )}
+                {deliveryFeeText}
+              </p>
+            </div>
+          )
+        }
 
         <!-- CTA -->
         <a
-          href={`/contact?produit=${encodeURIComponent(product.name ?? "")}`}
-          class="bg-brand-accent mt-6 inline-block rounded-md px-6 py-3 text-sm font-medium text-white transition-colors hover:opacity-90"
+          href={`/contact?produit=${encodeURIComponent(productName)}`}
+          class="bg-brand-accent hover:bg-brand-accent/90 group/cta mt-10 inline-flex w-full items-center justify-center gap-2 rounded-(--radius) px-6 py-3.5 text-sm font-medium tracking-wide text-white transition-all sm:w-auto sm:px-7"
         >
-          {stegaClean(productTemplatePage?.labels?.quoteCtaLabel ?? "")}
+          {quoteCtaLabel}
+          <IconArrowRight
+            size={16}
+            className="transition-transform duration-300 group-hover/cta:translate-x-0.5"
+          />
         </a>
       </div>
     </div>
@@ -156,21 +262,44 @@ const mainImage = images[0];
     <!-- Description -->
     {
       product.description && (
-        <div class="mt-12 [&_a]:underline [&_h2]:mt-6 [&_h2]:text-xl [&_h2]:font-semibold [&_p]:mt-4 [&_p]:leading-7 [&_ul]:mt-2 [&_ul]:list-disc [&_ul]:pl-6">
-          <PortableText value={product.description} />
-        </div>
+        <section class="mt-20 max-w-2xl lg:mt-28">
+          <div class="text-muted-foreground [&_a]:text-brand-accent [&_h2]:font-heading [&_h2]:text-primary [&_h3]:font-heading [&_h3]:text-primary text-[15px] leading-relaxed [&_a]:underline [&_a]:underline-offset-4 [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:mt-6 [&_h3]:text-base [&_h3]:font-semibold [&_li]:leading-relaxed [&_p]:mt-4 [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5">
+            <PortableText value={product.description} />
+          </div>
+        </section>
       )
     }
 
     <!-- Back link -->
-    <a
+    <ArrowLink
       href={`/produits/${categorie}`}
-      class="text-brand-accent mt-12 inline-block text-sm hover:underline"
+      direction="left"
+      class="mt-16 lg:mt-20"
     >
-      &larr; {
-        stegaClean(productTemplatePage?.labels?.backToCategoryPrefix ?? "")
-      }{" "}
-      {product.category?.name}
-    </a>
+      {`${backToCategoryPrefix} ${productCategoryName}`}
+    </ArrowLink>
   </section>
 </Layout>
+
+<script>
+  const main = document.getElementById(
+    "product-main-image",
+  ) as HTMLImageElement | null;
+  const thumbs = document.querySelectorAll<HTMLButtonElement>(
+    "[data-gallery-thumb]",
+  );
+
+  if (main && thumbs.length > 0) {
+    thumbs.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const url = btn.dataset.imageUrl;
+        const alt = btn.dataset.imageAlt;
+        if (!url) return;
+        main.src = url;
+        if (alt !== undefined) main.alt = alt;
+        thumbs.forEach((b) => b.setAttribute("aria-pressed", "false"));
+        btn.setAttribute("aria-pressed", "true");
+      });
+    });
+  }
+</script>

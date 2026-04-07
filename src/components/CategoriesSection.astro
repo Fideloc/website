@@ -1,10 +1,11 @@
 ---
 import { stegaClean } from "@sanity/client/stega";
-import { IconArrowRight } from "@tabler/icons-react";
 import CategoryCard from "./CategoryCard.astro";
+import ArrowLink from "./ArrowLink.astro";
 
 interface Props {
   sectionTitle?: string | null;
+  viewAllLabel?: string | null;
   categories: Array<{
     name: string;
     slug: string;
@@ -13,24 +14,22 @@ interface Props {
   }>;
 }
 
-const { sectionTitle, categories } = Astro.props;
+const { sectionTitle, viewAllLabel, categories } = Astro.props;
+
+const cleanSectionTitle = stegaClean(sectionTitle ?? "");
+const cleanViewAllLabel = stegaClean(viewAllLabel ?? "");
 ---
 
 <section class="mx-auto max-w-7xl px-4 py-14 md:px-8">
   <div class="mb-8 flex items-baseline justify-between">
     <h2 class="font-heading text-primary text-2xl font-semibold md:text-3xl">
-      {stegaClean(sectionTitle ?? "Nos categories")}
+      {cleanSectionTitle}
     </h2>
-    <a
-      href="/produits"
-      class="text-primary group hover:text-brand-accent flex items-center gap-1 text-sm font-medium transition-colors"
-    >
-      Tout voir
-      <IconArrowRight
-        size={14}
-        className="transition-transform group-hover:translate-x-0.5"
-      />
-    </a>
+    {
+      cleanViewAllLabel && (
+        <ArrowLink href="/produits">{cleanViewAllLabel}</ArrowLink>
+      )
+    }
   </div>
 
   <div class="grid grid-cols-2 gap-6 lg:grid-cols-4">

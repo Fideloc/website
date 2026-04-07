@@ -1,15 +1,17 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { PortableText } from "astro-portabletext";
+import { stegaClean } from "@sanity/client/stega";
 import { getPageBySlug } from "../lib/sanity";
 
 const { data: page } = await getPageBySlug("mentions-legales");
+const title = stegaClean(page?.title ?? "");
 ---
 
-<Layout title={page?.title ? `${page.title} - Fidéloc` : ""}>
+<Layout title={title ? `${title} - Fidéloc` : ""}>
   <section class="mx-auto max-w-7xl px-4 py-16 md:px-8">
     <h1 class="font-heading text-primary text-4xl font-bold tracking-tight">
-      {page?.title ?? ""}
+      {title}
     </h1>
     {
       page?.content ? (

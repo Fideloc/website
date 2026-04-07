@@ -1,32 +1,120 @@
 ---
 import LogoBlack from "../assets/logo-black.svg";
+import { IconPhone } from "@tabler/icons-react";
+import { stegaClean } from "@sanity/client/stega";
+import type { SITE_SETTINGS_QUERY_RESULT } from "../lib/sanity.types";
+
+interface Props {
+  settings: SITE_SETTINGS_QUERY_RESULT;
+}
+
+const { settings } = Astro.props;
+const phone = stegaClean(settings?.phone ?? "");
 ---
 
 <header
-  class="bg-background/95 border-border fixed top-0 right-0 left-0 z-50 border-b px-6 py-4 backdrop-blur-sm lg:hidden"
+  class="bg-background/95 border-border fixed top-0 right-0 left-0 z-[70] border-b px-6 py-4 backdrop-blur-sm lg:hidden"
 >
-  <div class="flex items-center justify-between">
-    <a href="/" aria-label="Accueil">
+  <div class="flex items-center justify-between gap-4">
+    <a href="/" aria-label="Accueil" class="shrink-0">
       <LogoBlack class="h-8 w-auto" aria-label="fideloc" role="img" />
     </a>
+
+    {
+      phone && (
+        <a
+          href={`tel:${phone}`}
+          class="text-foreground hover:text-brand-accent ml-auto flex items-center gap-2 text-sm font-medium transition-colors"
+        >
+          <IconPhone size={18} stroke={1.75} />
+          <span>{phone}</span>
+        </a>
+      )
+    }
+
     <button
-      id="mobile-menu-toggle"
-      class="text-foreground p-2"
+      id="mobile-menu-button"
+      class="text-foreground border-border bg-muted rounded-md border p-2"
       aria-label="Menu"
+      aria-expanded="false"
     >
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-      >
-        <line x1="3" y1="6" x2="21" y2="6"></line>
-        <line x1="3" y1="12" x2="21" y2="12"></line>
-        <line x1="3" y1="18" x2="21" y2="18"></line>
-      </svg>
+      <span class="hamburger" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </span>
     </button>
   </div>
 </header>
+
+<style>
+  .hamburger {
+    --box-size: 20px;
+    --line-thickness: 2px;
+    --space-between: 5px;
+    --x-side: calc(var(--box-size) / 1.4142135623730951);
+    --space-above: calc(
+      (var(--box-size) - 3 * var(--line-thickness) - 2 * var(--space-between)) /
+        2
+    );
+    position: relative;
+    display: block;
+    width: var(--box-size);
+    height: var(--box-size);
+    flex-shrink: 0;
+  }
+
+  .hamburger > span {
+    display: block;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: var(--line-thickness);
+    background: currentColor;
+    border-radius: var(--line-thickness);
+    transform-origin: left center;
+    transition-duration: 0.25s;
+    transition-timing-function: ease;
+  }
+
+  .hamburger > :nth-child(1) {
+    top: var(--space-above);
+    transition-property: transform;
+  }
+
+  .hamburger > :nth-child(2) {
+    top: calc(
+      var(--space-above) + var(--line-thickness) + var(--space-between)
+    );
+    transition-property: width, opacity;
+  }
+
+  .hamburger > :nth-child(3) {
+    top: calc(
+      var(--space-above) + 2 * (var(--line-thickness) + var(--space-between))
+    );
+    transition-property: transform;
+  }
+
+  [aria-expanded="true"] .hamburger > :nth-child(1) {
+    transform: translateY(
+        calc(
+          -1 *
+            (var(--x-side) / 2 - var(--line-thickness) - var(--space-between))
+        )
+      )
+      translateX(calc((var(--box-size) - var(--x-side)) / 2)) rotate(45deg);
+  }
+
+  [aria-expanded="true"] .hamburger > :nth-child(2) {
+    width: 0%;
+    opacity: 0;
+  }
+
+  [aria-expanded="true"] .hamburger > :nth-child(3) {
+    transform: translateY(
+        calc(var(--x-side) / 2 - var(--line-thickness) - var(--space-between))
+      )
+      translateX(calc((var(--box-size) - var(--x-side)) / 2)) rotate(-45deg);
+  }
+</style>

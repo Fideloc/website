@@ -1,0 +1,37 @@
+---
+import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
+
+interface Props {
+  href: string;
+  direction?: "left" | "right";
+  class?: string;
+}
+
+const { href, direction = "right", class: className } = Astro.props;
+---
+
+<a
+  href={href}
+  class:list={[
+    "text-primary group/arrow-link hover:text-brand-accent inline-flex items-center gap-1 text-sm font-medium transition-colors",
+    className,
+  ]}
+>
+  {
+    direction === "left" && (
+      <IconArrowLeft
+        size={14}
+        className="transition-transform group-hover/arrow-link:-translate-x-0.5"
+      />
+    )
+  }
+  <slot />
+  {
+    direction === "right" && (
+      <IconArrowRight
+        size={14}
+        className="transition-transform group-hover/arrow-link:translate-x-0.5"
+      />
+    )
+  }
+</a>

@@ -6,6 +6,8 @@ export const siteSettingsType = defineType({
   type: "document",
   groups: [
     { name: "hero", title: "Hero" },
+    { name: "howItWorks", title: "Comment ça marche" },
+    { name: "footer", title: "Footer" },
     { name: "navigation", title: "Navigation" },
   ],
   fields: [
@@ -36,6 +38,18 @@ export const siteSettingsType = defineType({
       title: "Zone de service",
       type: "string",
       description: "Ex: Martinique, Fort-de-France et environs",
+    }),
+    defineField({
+      name: "deliveryFeeLabel",
+      title: "Libellé forfait livraison",
+      type: "string",
+      description: "Ex : Livraison & récupération",
+    }),
+    defineField({
+      name: "deliveryFeeText",
+      title: "Détail forfait livraison",
+      type: "string",
+      description: "Ex : Forfait 30 € + 0,90 €/km aller-retour",
     }),
     defineField({
       name: "heroHeadline",
@@ -72,6 +86,83 @@ export const siteSettingsType = defineType({
       type: "string",
       description: "Ex : Demander un devis",
       group: "hero",
+    }),
+    defineField({
+      name: "howItWorksTitle",
+      title: "Titre de la section",
+      type: "string",
+      description: "Ex : Comment ça marche",
+      group: "howItWorks",
+    }),
+    defineField({
+      name: "howItWorksContactLabel",
+      title: "Libellé du lien contact",
+      type: "string",
+      description: "Ex : Nous contacter",
+      group: "howItWorks",
+    }),
+    defineField({
+      name: "howItWorksSteps",
+      title: "Étapes",
+      type: "array",
+      group: "howItWorks",
+      of: [
+        {
+          type: "object",
+          fields: [
+            defineField({
+              name: "number",
+              title: "Numéro",
+              type: "string",
+              description: "Ex : 01, 02, 03",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "title",
+              title: "Titre",
+              type: "string",
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: "description",
+              title: "Description",
+              type: "text",
+              rows: 3,
+            }),
+          ],
+          preview: {
+            select: { title: "title", subtitle: "number" },
+          },
+        },
+      ],
+    }),
+    defineField({
+      name: "footerCategoriesLabel",
+      title: "En-tête colonne catégories",
+      type: "string",
+      description: "Ex : Catégories",
+      group: "footer",
+    }),
+    defineField({
+      name: "footerCompanyLabel",
+      title: "En-tête colonne entreprise",
+      type: "string",
+      description: "Ex : Entreprise",
+      group: "footer",
+    }),
+    defineField({
+      name: "footerLegalLabel",
+      title: "En-tête colonne légal",
+      type: "string",
+      description: "Ex : Légal",
+      group: "footer",
+    }),
+    defineField({
+      name: "footerBackToTopLabel",
+      title: "Libellé retour en haut",
+      type: "string",
+      description: "Ex : Retour en haut",
+      group: "footer",
     }),
     defineField({
       name: "navigation",

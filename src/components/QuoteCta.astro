@@ -1,5 +1,34 @@
 ---
+import { stegaClean } from "@sanity/client/stega";
+import { IconTruck } from "@tabler/icons-react";
 
+interface Props {
+  badge?: string | null;
+  headlineLine1?: string | null;
+  headlineLine2?: string | null;
+  description?: string | null;
+  buttonLabel?: string | null;
+  deliveryFeeLabel?: string | null;
+  deliveryFeeText?: string | null;
+}
+
+const {
+  badge,
+  headlineLine1,
+  headlineLine2,
+  description,
+  buttonLabel,
+  deliveryFeeLabel,
+  deliveryFeeText,
+} = Astro.props;
+
+const cleanBadge = stegaClean(badge ?? "");
+const cleanHeadlineLine1 = stegaClean(headlineLine1 ?? "");
+const cleanHeadlineLine2 = stegaClean(headlineLine2 ?? "");
+const cleanDescription = stegaClean(description ?? "");
+const cleanButtonLabel = stegaClean(buttonLabel ?? "");
+const cleanDeliveryFeeLabel = stegaClean(deliveryFeeLabel ?? "");
+const cleanDeliveryFeeText = stegaClean(deliveryFeeText ?? "");
 ---
 
 <section class="mx-auto max-w-7xl px-4 md:px-8">
@@ -7,28 +36,52 @@
     class="bg-secondary/60 relative overflow-hidden rounded-2xl px-8 py-12 md:px-12 md:py-16"
   >
     <div class="relative z-10 max-w-md">
-      <span
-        class="border-primary/15 text-primary mb-4 inline-block rounded-full border px-3 py-1 text-xs font-medium"
-      >
-        Devis gratuit
-      </span>
+      {
+        cleanBadge && (
+          <span class="border-primary/15 text-primary mb-4 inline-block rounded-full border px-3 py-1 text-xs font-medium">
+            {cleanBadge}
+          </span>
+        )
+      }
       <h2
         class="font-heading text-primary text-2xl leading-tight font-bold md:text-3xl"
       >
-        Besoin d'equipement&nbsp;?
-        <br />
-        Demandez votre devis&nbsp;!
+        {cleanHeadlineLine1}
+        {cleanHeadlineLine2 && <br />}
+        {cleanHeadlineLine2}
       </h2>
-      <p class="text-muted-foreground mt-3 text-sm leading-relaxed">
-        Nous vous repondons sous 24h avec une offre adaptee a votre projet et
-        votre budget.
-      </p>
-      <a
-        href="/contact"
-        class="bg-primary text-primary-foreground hover:bg-primary/85 mt-6 inline-flex items-center gap-2 rounded-(--radius) px-5 py-2.5 text-sm font-medium transition-colors"
-      >
-        Demander un devis
-      </a>
+      {
+        cleanDescription && (
+          <p class="text-muted-foreground mt-3 text-sm leading-relaxed">
+            {cleanDescription}
+          </p>
+        )
+      }
+      {
+        cleanButtonLabel && (
+          <a
+            href="/contact"
+            class="bg-primary text-primary-foreground hover:bg-primary/85 mt-6 inline-flex items-center gap-2 rounded-(--radius) px-5 py-2.5 text-sm font-medium transition-colors"
+          >
+            {cleanButtonLabel}
+          </a>
+        )
+      }
+      {
+        cleanDeliveryFeeText && (
+          <div class="text-muted-foreground mt-6 flex items-start gap-2 text-xs">
+            <IconTruck size={14} stroke={1.6} className="mt-0.5 shrink-0" />
+            <span>
+              {cleanDeliveryFeeLabel && (
+                <span class="text-foreground font-medium">
+                  {cleanDeliveryFeeLabel} ·{" "}
+                </span>
+              )}
+              {cleanDeliveryFeeText}
+            </span>
+          </div>
+        )
+      }
     </div>
   </div>
 </section>

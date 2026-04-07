@@ -1,0 +1,98 @@
+---
+import type { PRODUCTS_BY_CATEGORY_QUERY_RESULT } from "../lib/sanity.types";
+import { stegaClean } from "@sanity/client/stega";
+import SanityImage from "./SanityImage.astro";
+
+interface Props {
+  product: PRODUCTS_BY_CATEGORY_QUERY_RESULT[number];
+  categorie: string;
+  capacityUnit: string;
+  priceWeekendShortSuffix: string;
+  priceWeekShortSuffix: string;
+}
+
+const {
+  product,
+  categorie,
+  capacityUnit,
+  priceWeekendShortSuffix,
+  priceWeekShortSuffix,
+} = Astro.props;
+
+const code = stegaClean(product.code ?? "");
+const name = stegaClean(product.name ?? "");
+const dimensions = stegaClean(product.dimensions ?? "");
+const capacity = product.capacity;
+const slug = stegaClean(product.slug ?? "");
+
+const hasPricing = product.priceWeekend != null || product.priceWeek != null;
+---
+
+<a href={`/produits/${categorie}/${slug}`} class="group block">
+  <div class="bg-secondary/50 relative aspect-4/3 overflow-hidden rounded-xl">
+    {
+      product.images?.asset ? (
+        <SanityImage
+          image={product.images}
+          width={600}
+          class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+        />
+      ) : (
+        <div class="bg-muted absolute inset-0" />
+      )
+    }
+    {
+      code && (
+        <span class="bg-background/85 text-muted-foreground absolute top-3 left-3 rounded-full px-2.5 py-1 font-mono text-[10px] tracking-wider uppercase backdrop-blur">
+          {code}
+        </span>
+      )
+    }
+  </div>
+
+  <div class="mt-4 flex items-start justify-between gap-3">
+    <div class="min-w-0 flex-1">
+      <h3
+        class="font-heading text-primary group-hover:text-brand-accent text-[15px] leading-snug font-semibold transition-colors"
+      >
+        {name}
+      </h3>
+      {
+        dimensions && (
+          <p class="text-muted-foreground mt-1 truncate text-xs leading-tight">
+            {dimensions}
+          </p>
+        )
+      }
+      {
+        capacity != null && (
+          <p class="text-muted-foreground mt-0.5 truncate text-xs leading-tight">
+            {capacity} {capacityUnit}
+          </p>
+        )
+      }
+    </div>
+    {
+      hasPricing && (
+        <div class="shrink-0 space-y-0.5 text-right tabular-nums">
+          {product.priceWeekend != null && (
+            <p class="font-heading text-primary text-sm leading-tight font-semibold">
+              {product.priceWeekend} €
+              <span class="text-muted-foreground ml-0.5 text-[11px] font-normal">
+                {priceWeekendShortSuffix}
+              </span>
+            </p>
+          )}
+          {product.priceWeek != null && (
+            <p class="text-muted-foreground text-[13px] leading-tight font-medium">
+              {product.priceWeek} €
+              <span class="text-muted-foreground/70 ml-0.5 text-[11px] font-normal">
+                {priceWeekShortSuffix}
+              </span>
+            </p>
+          )}
+        </div>
+      )
+    }
+  </div>
+</a>

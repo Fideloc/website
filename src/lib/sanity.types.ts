@@ -33,11 +33,25 @@ export type SiteSettings = {
   phone?: string;
   email?: string;
   serviceArea?: string;
+  deliveryFeeLabel?: string;
+  deliveryFeeText?: string;
   heroHeadline?: string;
   heroHeadlineAccent?: string;
   heroDescription?: string;
   heroPrimaryCta?: string;
   heroSecondaryCta?: string;
+  howItWorksTitle?: string;
+  howItWorksContactLabel?: string;
+  howItWorksSteps?: Array<{
+    number?: string;
+    title?: string;
+    description?: string;
+    _key: string;
+  }>;
+  footerCategoriesLabel?: string;
+  footerCompanyLabel?: string;
+  footerLegalLabel?: string;
+  footerBackToTopLabel?: string;
   navigation?: Array<{
     label?: string;
     page?: PageReference;
@@ -89,11 +103,47 @@ export type Page = {
   }>;
   labels?: {
     sectionTitle?: string;
+    categoriesViewAllLabel?: string;
+    aboutTeaserHeadlineLine1?: string;
+    aboutTeaserHeadlineLine2?: string;
+    aboutTeaserSecondParagraph?: string;
+    aboutTeaserBadge?: string;
+    aboutTeaserCtaLabel?: string;
+    quoteCtaBadge?: string;
+    quoteCtaHeadlineLine1?: string;
+    quoteCtaHeadlineLine2?: string;
+    quoteCtaDescription?: string;
+    quoteCtaButtonLabel?: string;
     backLabel?: string;
     reservationTitle?: string;
     phoneLabel?: string;
     emailLabel?: string;
     serviceAreaLabel?: string;
+    formContactSectionTitle?: string;
+    formNeedSectionTitle?: string;
+    formDetailsSectionTitle?: string;
+    formNameLabel?: string;
+    formNamePlaceholder?: string;
+    formEmailLabel?: string;
+    formEmailPlaceholder?: string;
+    formPhoneLabel?: string;
+    formPhonePlaceholder?: string;
+    formCategoryLabel?: string;
+    formCategoryPlaceholder?: string;
+    formDateRangeLabel?: string;
+    formDateStartA11yLabel?: string;
+    formDateEndA11yLabel?: string;
+    formDeliveryLabel?: string;
+    formDeliveryDescription?: string;
+    formMessageLabel?: string;
+    formMessagePlaceholder?: string;
+    formSubmitLabel?: string;
+    formSubmitLoadingLabel?: string;
+    formSubmitDisclaimer?: string;
+    formSuccessTitle?: string;
+    formSuccessMessage?: string;
+    formSuccessNewRequestLabel?: string;
+    formGenericError?: string;
     emptyState?: string;
     breadcrumbCatalogLabel?: string;
     specDimensionsLabel?: string;
@@ -102,6 +152,8 @@ export type Page = {
     capacityUnit?: string;
     priceWeekendSuffix?: string;
     priceWeekSuffix?: string;
+    priceWeekendShortSuffix?: string;
+    priceWeekShortSuffix?: string;
     quoteCtaLabel?: string;
     backToCategoryPrefix?: string;
   };
@@ -326,18 +378,32 @@ export type AllSanitySchemaTypes =
 
 // Source: src/lib/sanity.queries.ts
 // Variable: SITE_SETTINGS_QUERY
-// Query: *[_type == "siteSettings"][0]{  companyName, slogan, phone, email, serviceArea,  heroHeadline, heroHeadlineAccent, heroDescription, heroPrimaryCta, heroSecondaryCta,  navigation[]{ _key, label, url, page->{ title, "slug": slug.current } },  footerLinks[]{ _key, label, url, page->{ title, "slug": slug.current } }}
+// Query: *[_type == "siteSettings"][0]{  companyName, slogan, phone, email, serviceArea, deliveryFeeLabel, deliveryFeeText,  heroHeadline, heroHeadlineAccent, heroDescription, heroPrimaryCta, heroSecondaryCta,  howItWorksTitle, howItWorksContactLabel,  howItWorksSteps[]{ _key, number, title, description },  footerCategoriesLabel, footerCompanyLabel, footerLegalLabel, footerBackToTopLabel,  navigation[]{ _key, label, url, page->{ title, "slug": slug.current } },  footerLinks[]{ _key, label, url, page->{ title, "slug": slug.current } }}
 export type SITE_SETTINGS_QUERY_RESULT = {
   companyName: string | null;
   slogan: string | null;
   phone: string | null;
   email: string | null;
   serviceArea: string | null;
+  deliveryFeeLabel: string | null;
+  deliveryFeeText: string | null;
   heroHeadline: string | null;
   heroHeadlineAccent: string | null;
   heroDescription: string | null;
   heroPrimaryCta: string | null;
   heroSecondaryCta: string | null;
+  howItWorksTitle: string | null;
+  howItWorksContactLabel: string | null;
+  howItWorksSteps: Array<{
+    _key: string;
+    number: string | null;
+    title: string | null;
+    description: string | null;
+  }> | null;
+  footerCategoriesLabel: string | null;
+  footerCompanyLabel: string | null;
+  footerLegalLabel: string | null;
+  footerBackToTopLabel: string | null;
   navigation: Array<{
     _key: string;
     label: string | null;
@@ -475,7 +541,7 @@ export type ALL_PRODUCT_SLUGS_QUERY_RESULT = Array<{
 
 // Source: src/lib/sanity.queries.ts
 // Variable: PAGE_BY_SLUG_QUERY
-// Query: *[_type == "page" && slug.current == $slug][0]{  _id,  title,  "slug": slug.current,  template,  intro,  labels{    sectionTitle,    backLabel,    reservationTitle,    phoneLabel,    emailLabel,    serviceAreaLabel,    emptyState,    breadcrumbCatalogLabel,    specDimensionsLabel,    productCodeLabel,    specCapacityLabel,    capacityUnit,    priceWeekendSuffix,    priceWeekSuffix,    quoteCtaLabel,    backToCategoryPrefix  },  content}
+// Query: *[_type == "page" && slug.current == $slug][0]{  _id,  title,  "slug": slug.current,  template,  intro,  labels{    sectionTitle,    categoriesViewAllLabel,    aboutTeaserHeadlineLine1,    aboutTeaserHeadlineLine2,    aboutTeaserSecondParagraph,    aboutTeaserBadge,    aboutTeaserCtaLabel,    quoteCtaBadge,    quoteCtaHeadlineLine1,    quoteCtaHeadlineLine2,    quoteCtaDescription,    quoteCtaButtonLabel,    backLabel,    reservationTitle,    phoneLabel,    emailLabel,    serviceAreaLabel,    formContactSectionTitle,    formNeedSectionTitle,    formDetailsSectionTitle,    formNameLabel,    formNamePlaceholder,    formEmailLabel,    formEmailPlaceholder,    formPhoneLabel,    formPhonePlaceholder,    formCategoryLabel,    formCategoryPlaceholder,    formDateRangeLabel,    formDateStartA11yLabel,    formDateEndA11yLabel,    formDeliveryLabel,    formDeliveryDescription,    formMessageLabel,    formMessagePlaceholder,    formSubmitLabel,    formSubmitLoadingLabel,    formSubmitDisclaimer,    formSuccessTitle,    formSuccessMessage,    formSuccessNewRequestLabel,    formGenericError,    emptyState,    breadcrumbCatalogLabel,    specDimensionsLabel,    productCodeLabel,    specCapacityLabel,    capacityUnit,    priceWeekendSuffix,    priceWeekSuffix,    priceWeekendShortSuffix,    priceWeekShortSuffix,    quoteCtaLabel,    backToCategoryPrefix  },  content}
 export type PAGE_BY_SLUG_QUERY_RESULT = {
   _id: string;
   title: string | null;
@@ -492,11 +558,47 @@ export type PAGE_BY_SLUG_QUERY_RESULT = {
   intro: string | null;
   labels: {
     sectionTitle: string | null;
+    categoriesViewAllLabel: string | null;
+    aboutTeaserHeadlineLine1: string | null;
+    aboutTeaserHeadlineLine2: string | null;
+    aboutTeaserSecondParagraph: string | null;
+    aboutTeaserBadge: string | null;
+    aboutTeaserCtaLabel: string | null;
+    quoteCtaBadge: string | null;
+    quoteCtaHeadlineLine1: string | null;
+    quoteCtaHeadlineLine2: string | null;
+    quoteCtaDescription: string | null;
+    quoteCtaButtonLabel: string | null;
     backLabel: string | null;
     reservationTitle: string | null;
     phoneLabel: string | null;
     emailLabel: string | null;
     serviceAreaLabel: string | null;
+    formContactSectionTitle: string | null;
+    formNeedSectionTitle: string | null;
+    formDetailsSectionTitle: string | null;
+    formNameLabel: string | null;
+    formNamePlaceholder: string | null;
+    formEmailLabel: string | null;
+    formEmailPlaceholder: string | null;
+    formPhoneLabel: string | null;
+    formPhonePlaceholder: string | null;
+    formCategoryLabel: string | null;
+    formCategoryPlaceholder: string | null;
+    formDateRangeLabel: string | null;
+    formDateStartA11yLabel: string | null;
+    formDateEndA11yLabel: string | null;
+    formDeliveryLabel: string | null;
+    formDeliveryDescription: string | null;
+    formMessageLabel: string | null;
+    formMessagePlaceholder: string | null;
+    formSubmitLabel: string | null;
+    formSubmitLoadingLabel: string | null;
+    formSubmitDisclaimer: string | null;
+    formSuccessTitle: string | null;
+    formSuccessMessage: string | null;
+    formSuccessNewRequestLabel: string | null;
+    formGenericError: string | null;
     emptyState: string | null;
     breadcrumbCatalogLabel: string | null;
     specDimensionsLabel: string | null;
@@ -505,6 +607,8 @@ export type PAGE_BY_SLUG_QUERY_RESULT = {
     capacityUnit: string | null;
     priceWeekendSuffix: string | null;
     priceWeekSuffix: string | null;
+    priceWeekendShortSuffix: string | null;
+    priceWeekShortSuffix: string | null;
     quoteCtaLabel: string | null;
     backToCategoryPrefix: string | null;
   } | null;
@@ -532,12 +636,12 @@ export type PAGE_BY_SLUG_QUERY_RESULT = {
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    '*[_type == "siteSettings"][0]{\n  companyName, slogan, phone, email, serviceArea,\n  heroHeadline, heroHeadlineAccent, heroDescription, heroPrimaryCta, heroSecondaryCta,\n  navigation[]{ _key, label, url, page->{ title, "slug": slug.current } },\n  footerLinks[]{ _key, label, url, page->{ title, "slug": slug.current } }\n}': SITE_SETTINGS_QUERY_RESULT;
+    '*[_type == "siteSettings"][0]{\n  companyName, slogan, phone, email, serviceArea, deliveryFeeLabel, deliveryFeeText,\n  heroHeadline, heroHeadlineAccent, heroDescription, heroPrimaryCta, heroSecondaryCta,\n  howItWorksTitle, howItWorksContactLabel,\n  howItWorksSteps[]{ _key, number, title, description },\n  footerCategoriesLabel, footerCompanyLabel, footerLegalLabel, footerBackToTopLabel,\n  navigation[]{ _key, label, url, page->{ title, "slug": slug.current } },\n  footerLinks[]{ _key, label, url, page->{ title, "slug": slug.current } }\n}': SITE_SETTINGS_QUERY_RESULT;
     '*[_type == "category"] | order(order asc){\n  _id, name, "slug": slug.current, description, order, image{ asset, alt, hotspot, crop }\n}': ALL_CATEGORIES_QUERY_RESULT;
     '*[_type == "category" && slug.current == $slug][0]{\n  _id, name, "slug": slug.current, description\n}': CATEGORY_BY_SLUG_QUERY_RESULT;
     '*[_type == "product" && category._ref == $categoryId] | order(order asc){\n  _id, name, code, "slug": slug.current, dimensions, capacity,\n  priceWeek, priceWeekend, images[0]{ asset, alt }, description\n}': PRODUCTS_BY_CATEGORY_QUERY_RESULT;
     '*[_type == "product" && slug.current == $slug][0]{\n  _id, name, code, "slug": slug.current,\n  category->{ _id, name, "slug": slug.current },\n  images[]{ asset, alt, hotspot, crop, _key },\n  description, dimensions, capacity, priceWeek, priceWeekend\n}': PRODUCT_BY_SLUG_QUERY_RESULT;
     '*[_type == "product"]{\n  "slug": slug.current, "categorie": category->slug.current\n}': ALL_PRODUCT_SLUGS_QUERY_RESULT;
-    '*[_type == "page" && slug.current == $slug][0]{\n  _id,\n  title,\n  "slug": slug.current,\n  template,\n  intro,\n  labels{\n    sectionTitle,\n    backLabel,\n    reservationTitle,\n    phoneLabel,\n    emailLabel,\n    serviceAreaLabel,\n    emptyState,\n    breadcrumbCatalogLabel,\n    specDimensionsLabel,\n    productCodeLabel,\n    specCapacityLabel,\n    capacityUnit,\n    priceWeekendSuffix,\n    priceWeekSuffix,\n    quoteCtaLabel,\n    backToCategoryPrefix\n  },\n  content\n}': PAGE_BY_SLUG_QUERY_RESULT;
+    '*[_type == "page" && slug.current == $slug][0]{\n  _id,\n  title,\n  "slug": slug.current,\n  template,\n  intro,\n  labels{\n    sectionTitle,\n    categoriesViewAllLabel,\n    aboutTeaserHeadlineLine1,\n    aboutTeaserHeadlineLine2,\n    aboutTeaserSecondParagraph,\n    aboutTeaserBadge,\n    aboutTeaserCtaLabel,\n    quoteCtaBadge,\n    quoteCtaHeadlineLine1,\n    quoteCtaHeadlineLine2,\n    quoteCtaDescription,\n    quoteCtaButtonLabel,\n    backLabel,\n    reservationTitle,\n    phoneLabel,\n    emailLabel,\n    serviceAreaLabel,\n    formContactSectionTitle,\n    formNeedSectionTitle,\n    formDetailsSectionTitle,\n    formNameLabel,\n    formNamePlaceholder,\n    formEmailLabel,\n    formEmailPlaceholder,\n    formPhoneLabel,\n    formPhonePlaceholder,\n    formCategoryLabel,\n    formCategoryPlaceholder,\n    formDateRangeLabel,\n    formDateStartA11yLabel,\n    formDateEndA11yLabel,\n    formDeliveryLabel,\n    formDeliveryDescription,\n    formMessageLabel,\n    formMessagePlaceholder,\n    formSubmitLabel,\n    formSubmitLoadingLabel,\n    formSubmitDisclaimer,\n    formSuccessTitle,\n    formSuccessMessage,\n    formSuccessNewRequestLabel,\n    formGenericError,\n    emptyState,\n    breadcrumbCatalogLabel,\n    specDimensionsLabel,\n    productCodeLabel,\n    specCapacityLabel,\n    capacityUnit,\n    priceWeekendSuffix,\n    priceWeekSuffix,\n    priceWeekendShortSuffix,\n    priceWeekShortSuffix,\n    quoteCtaLabel,\n    backToCategoryPrefix\n  },\n  content\n}': PAGE_BY_SLUG_QUERY_RESULT;
   }
 }

@@ -7,10 +7,11 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "sanity:schema-extract": "XDG_CONFIG_HOME=.sanity-config sanity schema extract",
-    "sanity:typegen": "XDG_CONFIG_HOME=.sanity-config pnpm sanity:schema-extract && XDG_CONFIG_HOME=.sanity-config sanity typegen generate",
+    "sanity:schema-extract": "sanity schema extract",
+    "sanity:schema-deploy": "sanity schema deploy",
+    "sanity:typegen": "pnpm sanity:schema-extract && sanity typegen generate",
     "format": "prettier --write .",
-    "lint": "eslint \"src/**/*.{js,astro}\"",
+    "lint": "eslint \"src/**/*.{js,ts,tsx,astro}\"",
     "prepare": "husky"
   },
   "dependencies": {
@@ -40,7 +41,7 @@
     "react-hook-form": "^7.72.0",
     "react-is": "^19.2.4",
     "resend": "^6.9.4",
-    "sanity": "^5.18.0",
+    "sanity": "^5.20.0",
     "shadcn": "^4.1.1",
     "styled-components": "^6.3.12",
     "tailwind-merge": "^3.5.0",
