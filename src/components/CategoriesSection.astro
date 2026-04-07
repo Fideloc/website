@@ -1,0 +1,39 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import { IconArrowRight } from "@tabler/icons-react";
+import CategoryCard from "./CategoryCard.astro";
+
+interface Props {
+  sectionTitle?: string | null;
+  categories: Array<{
+    name: string;
+    slug: string;
+    description?: string | null;
+    imageUrl: string | null;
+  }>;
+}
+
+const { sectionTitle, categories } = Astro.props;
+---
+
+<section class="mx-auto max-w-7xl px-4 py-14 md:px-8">
+  <div class="mb-8 flex items-baseline justify-between">
+    <h2 class="font-heading text-primary text-2xl font-semibold md:text-3xl">
+      {stegaClean(sectionTitle ?? "Nos categories")}
+    </h2>
+    <a
+      href="/produits"
+      class="text-primary group hover:text-brand-accent flex items-center gap-1 text-sm font-medium transition-colors"
+    >
+      Tout voir
+      <IconArrowRight
+        size={14}
+        className="transition-transform group-hover:translate-x-0.5"
+      />
+    </a>
+  </div>
+
+  <div class="grid grid-cols-2 gap-6 lg:grid-cols-4">
+    {categories.slice(0, 4).map((cat) => <CategoryCard {...cat} />)}
+  </div>
+</section>

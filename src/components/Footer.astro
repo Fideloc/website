@@ -1,0 +1,157 @@
+---
+import LogoBlack from "../assets/logo-black.svg";
+import { IconPhone, IconMapPin, IconMail } from "@tabler/icons-react";
+import type {
+  SITE_SETTINGS_QUERY_RESULT,
+  ALL_CATEGORIES_QUERY_RESULT,
+} from "../lib/sanity.types";
+
+type NavLink = NonNullable<
+  NonNullable<SITE_SETTINGS_QUERY_RESULT>["navigation"]
+>[number];
+
+interface Props {
+  settings: SITE_SETTINGS_QUERY_RESULT;
+  categories: ALL_CATEGORIES_QUERY_RESULT;
+  navLinks: NavLink[];
+  footerLinks: NavLink[];
+}
+
+const { settings, categories, navLinks, footerLinks } = Astro.props;
+---
+
+<footer class="bg-secondary/40 border-border border-t py-14">
+  <div class="mx-auto max-w-7xl px-8 md:px-12">
+    <div class="grid gap-16 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="lg:col-span">
+        <LogoBlack class="h-8 w-auto" />
+        <p class="text-muted-foreground mt-4 text-sm leading-relaxed">
+          {
+            settings?.slogan ??
+              "Location d'equipement professionnel pour vos chantiers et evenements."
+          }
+        </p>
+        <div class="mt-5 space-y-2">
+          {
+            settings?.phone && (
+              <a
+                href={`tel:${settings.phone}`}
+                class="text-foreground hover:text-brand-accent flex items-center gap-2 text-sm transition-colors"
+              >
+                <IconPhone size={14} className="text-muted-foreground" />
+                {settings.phone}
+              </a>
+            )
+          }
+          {
+            settings?.serviceArea && (
+              <p class="text-foreground flex items-center gap-2 text-sm">
+                <IconMapPin size={14} className="text-muted-foreground" />
+                {settings.serviceArea}
+              </p>
+            )
+          }
+          {
+            settings?.email && (
+              <a
+                href={`mailto:${settings.email}`}
+                class="text-foreground hover:text-brand-accent flex items-center gap-2 text-sm transition-colors"
+              >
+                <IconMail size={14} className="text-muted-foreground" />
+                {settings.email}
+              </a>
+            )
+          }
+        </div>
+      </div>
+
+      <div>
+        <p
+          class="text-muted-foreground mb-4 text-[11px] font-semibold tracking-widest uppercase"
+        >
+          Categories
+        </p>
+        <ul class="space-y-2.5">
+          {
+            (categories ?? []).map((cat) => (
+              <li>
+                <a
+                  href={`/produits/${cat.slug}`}
+                  class="text-foreground hover:text-brand-accent text-sm transition-colors"
+                >
+                  {cat.name}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div>
+        <p
+          class="text-muted-foreground mb-4 text-[11px] font-semibold tracking-widest uppercase"
+        >
+          Entreprise
+        </p>
+        <ul class="space-y-2.5">
+          {
+            navLinks.map((link) => {
+              const href =
+                link.url || (link.page?.slug ? `/${link.page.slug}` : "/");
+              return (
+                <li>
+                  <a
+                    href={href}
+                    class="text-foreground hover:text-brand-accent text-sm transition-colors"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              );
+            })
+          }
+        </ul>
+
+        <p
+          class="text-muted-foreground mt-6 mb-4 text-[11px] font-semibold tracking-widest uppercase"
+        >
+          Legal
+        </p>
+        <ul class="space-y-2.5">
+          {
+            footerLinks.map((link) => {
+              const href =
+                link.url || (link.page?.slug ? `/${link.page.slug}` : "/");
+              return (
+                <li>
+                  <a
+                    href={href}
+                    class="text-foreground hover:text-brand-accent text-sm transition-colors"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="border-border mt-10 border-t pt-6">
+      <div class="flex items-center justify-between">
+        <p class="text-muted-foreground text-xs">
+          &copy; {new Date().getFullYear()}
+          {settings?.companyName ?? "Fideloc"}
+        </p>
+        <a
+          href="#"
+          class="text-muted-foreground hover:text-foreground text-xs transition-colors"
+          onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"
+        >
+          Retour en haut
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>

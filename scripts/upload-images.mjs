@@ -27,7 +27,7 @@ const TOKEN = process.env.SANITY_API_TOKEN;
 
 if (!TOKEN) {
   console.error(
-    "Missing SANITY_API_TOKEN. Create one at https://www.sanity.io/manage/personal/project/sjagkr9a/api"
+    "Missing SANITY_API_TOKEN. Create one at https://www.sanity.io/manage/personal/project/sjagkr9a/api",
   );
   process.exit(1);
 }
@@ -93,7 +93,7 @@ async function main() {
   // 1. Fetch all products from Sanity
   console.log("Fetching products from Sanity...");
   const products = await client.fetch(
-    `*[_type == "product"]{ _id, code, name, "imageCount": count(images) }`
+    `*[_type == "product"]{ _id, code, name, "imageCount": count(images) }`,
   );
   console.log(`Found ${products.length} products in Sanity.`);
 
@@ -132,14 +132,18 @@ async function main() {
 
     const product = productByCode.get(code);
     if (!product) {
-      console.log(`  ⏭  ${folder} — no product found for code "${code}", skipping`);
+      console.log(
+        `  ⏭  ${folder} — no product found for code "${code}", skipping`,
+      );
       skipped++;
       continue;
     }
 
     // Skip if product already has images
     if (product.imageCount > 0) {
-      console.log(`  ✓  ${folder} — "${product.name}" already has ${product.imageCount} images`);
+      console.log(
+        `  ✓  ${folder} — "${product.name}" already has ${product.imageCount} images`,
+      );
       skipped++;
       continue;
     }
@@ -163,7 +167,7 @@ async function main() {
     }
 
     console.log(
-      `  📸 ${folder} — "${product.name}" — uploading ${imageFiles.length} images...`
+      `  📸 ${folder} — "${product.name}" — uploading ${imageFiles.length} images...`,
     );
 
     const imageRefs = [];
@@ -187,7 +191,9 @@ async function main() {
           alt: product.name,
         });
 
-        console.log(`       ✓ ${imageFile} (${(buffer.length / 1024).toFixed(0)} KB)`);
+        console.log(
+          `       ✓ ${imageFile} (${(buffer.length / 1024).toFixed(0)} KB)`,
+        );
       } catch (err) {
         console.error(`       ✗ ${imageFile} — ${err.message}`);
         errors++;
@@ -198,7 +204,7 @@ async function main() {
       // Patch product with images
       await client.patch(product._id).set({ images: imageRefs }).commit();
       console.log(
-        `       → patched "${product.name}" with ${imageRefs.length} images`
+        `       → patched "${product.name}" with ${imageRefs.length} images`,
       );
       uploaded++;
     }

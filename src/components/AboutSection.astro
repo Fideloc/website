@@ -1,0 +1,62 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import LogoWhite from "../assets/logo-white.svg";
+
+interface Props {
+  intro?: string | null;
+}
+
+const { intro } = Astro.props;
+---
+
+<section
+  class="from-primary via-primary relative mt-14 overflow-hidden bg-linear-to-br to-[#0f1a2e] py-16 md:py-24"
+>
+  <div
+    class="relative z-10 mx-auto grid max-w-7xl gap-10 px-4 md:grid-cols-5 md:px-8"
+  >
+    <div class="md:col-span-3">
+      <h2
+        class="font-heading text-3xl leading-tight font-bold text-white md:text-4xl"
+      >
+        Un service local.
+        <br />
+        Une confiance durable.
+      </h2>
+      <div
+        class="mt-6 max-w-lg space-y-4 text-sm leading-relaxed text-white/60"
+      >
+        <p>
+          {
+            stegaClean(intro ?? "") ||
+              "Fideloc met a votre disposition un parc d'equipements professionnels pour vos chantiers et evenements. Nous croyons qu'un bon equipement, disponible au bon moment, fait toute la difference."
+          }
+        </p>
+        <p>
+          Chaque location est preparee avec soin par notre equipe. Que vous
+          construisiez, renoviez ou organisiez un evenement, notre materiel est
+          verifie et pret a l'emploi.
+        </p>
+      </div>
+      <a
+        href="/a-propos"
+        class="mt-6 inline-flex items-center gap-2 rounded-(--radius) border border-white/20 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-white/10"
+      >
+        En savoir plus
+      </a>
+    </div>
+
+    <div class="flex items-center md:col-span-2">
+      <div
+        class="bg-background/[0.06] w-full rounded-xl border border-white/10 px-8 py-10 text-center backdrop-blur-sm"
+      >
+        <p class="text-xs font-medium tracking-wider text-white/40">
+          Depuis 2020
+        </p>
+        <div class="mt-3">
+          <LogoWhite class="mx-auto h-8 w-auto opacity-80" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

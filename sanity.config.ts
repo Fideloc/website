@@ -21,8 +21,12 @@ const dataset =
 const previewUrl =
   typeof import.meta.env !== "undefined"
     ? // @see https://vercel.com/docs/environment-variables/framework-environment-variables#PUBLIC_VERCEL_URL
-      (import.meta.env.PUBLIC_VERCEL_URL ?? "http://localhost:4321")
-    : (process.env.PUBLIC_VERCEL_URL ?? "http://localhost:4321");
+      (import.meta.env.PUBLIC_SITE_URL ??
+      import.meta.env.PUBLIC_VERCEL_URL ??
+      "http://localhost:4321")
+    : (process.env.PUBLIC_SITE_URL ??
+      process.env.PUBLIC_VERCEL_URL ??
+      "http://localhost:4321");
 
 export default defineConfig({
   projectId: projectId ?? "",

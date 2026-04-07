@@ -7,7 +7,7 @@ const { data: page } = await getPageBySlug("a-propos");
 ---
 
 <Layout title={page?.title ? `${page.title} - Fidéloc` : ""}>
-  <section class="mx-auto max-w-3xl px-6 py-16">
+  <section class="mx-auto max-w-7xl px-4 py-16 md:px-8">
     <h1 class="font-heading text-primary text-4xl font-bold tracking-tight">
       {page?.title ?? ""}
     </h1>

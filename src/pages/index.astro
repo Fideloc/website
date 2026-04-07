@@ -6,15 +6,18 @@ import {
   getPageBySlug,
   urlFor,
 } from "../lib/sanity";
-import Hero from "../components/Hero";
-import CategoryCarousel from "../components/CategoryCarousel";
-import { stegaClean } from "@sanity/client/stega";
+import HeroSection from "../components/HeroSection.astro";
+import CategoriesSection from "../components/CategoriesSection.astro";
+import QuoteCta from "../components/QuoteCta.astro";
+import AboutSection from "../components/AboutSection.astro";
+import HowItWorksSection from "../components/HowItWorksSection.astro";
 
 const { data: settings } = await getSiteSettings();
 const { data: categories } = await getAllCategories();
 const { data: homePage } = await getPageBySlug("accueil");
+const { data: aboutPage } = await getPageBySlug("a-propos");
 
-const carouselCategories = (categories ?? [])
+const categoryCards = (categories ?? [])
   .filter((cat): cat is typeof cat & { name: string; slug: string } =>
     Boolean(cat.name && cat.slug),
   )
@@ -24,8 +27,8 @@ const carouselCategories = (categories ?? [])
     description: cat.description,
     imageUrl: cat.image?.asset
       ? urlFor(cat.image)
-          .width(720)
-          .height(540)
+          .width(600)
+          .height(450)
           .fit("crop")
           .auto("format")
           .url()
@@ -35,23 +38,15 @@ const carouselCategories = (categories ?? [])
 
 <Layout
   title={settings?.companyName
-    ? `${settings.companyName} - Location d'équipement`
-    : "Fidéloc"}
+    ? `${settings.companyName} - Location d'equipement`
+    : "Fideloc"}
 >
-  <div class="mx-auto max-w-5xl space-y-16 px-6 py-16">
-    <Hero
-      headline={stegaClean(settings?.heroHeadline ?? "")}
-      headlineAccent={stegaClean(settings?.heroHeadlineAccent ?? "")}
-      description={stegaClean(settings?.heroDescription ?? "")}
-      primaryCta={stegaClean(settings?.heroPrimaryCta ?? "")}
-      secondaryCta={stegaClean(settings?.heroSecondaryCta ?? "")}
-    />
-
-    <section>
-      <h2 class="font-heading text-primary mb-6 text-2xl font-semibold">
-        {stegaClean(homePage?.labels?.sectionTitle ?? "")}
-      </h2>
-      <CategoryCarousel categories={carouselCategories} client:visible />
-    </section>
-  </div>
+  <HeroSection settings={settings} />
+  <CategoriesSection
+    sectionTitle={homePage?.labels?.sectionTitle}
+    categories={categoryCards}
+  />
+  <QuoteCta />
+  <AboutSection intro={aboutPage?.intro} />
+  <HowItWorksSection />
 </Layout>

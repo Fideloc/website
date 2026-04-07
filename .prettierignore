@@ -1,0 +1,14 @@
+# Lockfiles
+pnpm-lock.yaml
+pnpm-workspace.yaml
+
+# Sanity CLI auto-generated config
+.sanity-config/
+
+# Build output
+dist/
+.astro/
+.vercel/
+
+# Dependencies
+node_modules/

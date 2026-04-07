@@ -1,0 +1,103 @@
+---
+import type {
+  SITE_SETTINGS_QUERY_RESULT,
+  ALL_CATEGORIES_QUERY_RESULT,
+} from "../lib/sanity.types";
+
+type NavLink = NonNullable<
+  NonNullable<SITE_SETTINGS_QUERY_RESULT>["navigation"]
+>[number];
+
+interface Props {
+  categories: ALL_CATEGORIES_QUERY_RESULT;
+  navLinks: NavLink[];
+  settings: SITE_SETTINGS_QUERY_RESULT;
+}
+
+const { categories, navLinks, settings } = Astro.props;
+---
+
+<div
+  id="mobile-menu"
+  class="bg-background fixed inset-0 z-[60] hidden flex-col overflow-y-auto px-6 pt-20 pb-6 lg:hidden"
+>
+  <button
+    id="mobile-menu-close"
+    class="text-foreground absolute top-4 right-6 p-2"
+    aria-label="Fermer"
+  >
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+    >
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </button>
+
+  <nav class="mb-8">
+    <p
+      class="text-muted-foreground mb-4 text-[11px] font-semibold tracking-widest uppercase"
+    >
+      Categories
+    </p>
+    <ul class="space-y-3">
+      {
+        (categories ?? []).map((cat) => (
+          <li>
+            <a
+              href={`/produits/${cat.slug}`}
+              class="font-heading text-foreground hover:text-brand-accent text-lg transition-colors"
+            >
+              {cat.name}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <nav class="mb-8">
+    <ul class="space-y-3">
+      {
+        navLinks.map((link) => {
+          const href =
+            link.url || (link.page?.slug ? `/${link.page.slug}` : "/");
+          return (
+            <li>
+              <a
+                href={href}
+                class="text-foreground hover:text-brand-accent text-base transition-colors"
+              >
+                {link.label}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </nav>
+
+  {
+    settings?.phone && (
+      <div class="mt-auto">
+        <p class="text-muted-foreground mb-2 text-[11px] font-semibold tracking-widest uppercase">
+          Contact
+        </p>
+        <a href={`tel:${settings.phone}`} class="text-foreground text-sm">
+          {settings.phone}
+        </a>
+        {settings?.serviceArea && (
+          <p class="text-muted-foreground mt-1 text-sm">
+            {settings.serviceArea}
+          </p>
+        )}
+      </div>
+    )
+  }
+</div>

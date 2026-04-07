@@ -1,0 +1,142 @@
+---
+import LogoBlack from "../assets/logo-black.svg";
+import type {
+  SITE_SETTINGS_QUERY_RESULT,
+  ALL_CATEGORIES_QUERY_RESULT,
+} from "../lib/sanity.types";
+
+type NavLink = NonNullable<
+  NonNullable<SITE_SETTINGS_QUERY_RESULT>["navigation"]
+>[number];
+
+interface Props {
+  categories: ALL_CATEGORIES_QUERY_RESULT;
+  navLinks: NavLink[];
+  footerLinks: NavLink[];
+  settings: SITE_SETTINGS_QUERY_RESULT;
+  currentPath: string;
+}
+
+const { categories, navLinks, footerLinks, settings, currentPath } =
+  Astro.props;
+---
+
+<aside
+  class="border-border bg-background fixed inset-y-0 left-0 z-50 hidden flex-col overflow-y-auto border-r lg:flex lg:w-[220px] xl:w-[260px]"
+>
+  <div class="short:pt-5 short:pb-2 px-6 pt-8 pb-4 xl:px-8">
+    <a href="/" aria-label="Accueil">
+      <LogoBlack class="short:h-7 h-9 w-auto" aria-label="fideloc" role="img" />
+    </a>
+  </div>
+
+  <nav class="short:pt-2 px-6 pt-4 xl:px-8">
+    <p
+      class="text-muted-foreground short:mb-2 mb-4 text-[11px] font-semibold tracking-widest uppercase"
+    >
+      Categories
+    </p>
+    <ul class="short:space-y-1.5 space-y-2.5">
+      {
+        (categories ?? []).map((cat) => {
+          const catHref = `/produits/${cat.slug}`;
+          const isActive =
+            currentPath === catHref || currentPath.startsWith(catHref + "/");
+          return (
+            <li>
+              <a
+                href={catHref}
+                class:list={[
+                  "font-heading text-[15px] font-medium transition-colors",
+                  isActive
+                    ? "text-brand-accent"
+                    : "text-foreground hover:text-brand-accent",
+                ]}
+              >
+                {cat.name}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </nav>
+
+  <div class="short:min-h-2 min-h-4 flex-1"></div>
+
+  <div class="border-border short:pt-3 border-t px-6 pt-6 xl:px-8">
+    <p
+      class="text-muted-foreground short:mb-1 mb-3 text-[11px] font-semibold tracking-widest uppercase"
+    >
+      Contact
+    </p>
+    {
+      settings?.phone && (
+        <a
+          href={`tel:${settings.phone}`}
+          class="text-foreground hover:text-brand-accent block text-sm transition-colors"
+        >
+          {settings.phone}
+        </a>
+      )
+    }
+    {
+      settings?.serviceArea && (
+        <p class="text-foreground mt-1 text-sm">{settings.serviceArea}</p>
+      )
+    }
+  </div>
+
+  <nav class="short:mt-3 mt-6 px-6 xl:px-8">
+    <ul class="short:space-y-1 space-y-2">
+      {
+        navLinks.map((link) => {
+          const href =
+            link.url || (link.page?.slug ? `/${link.page.slug}` : "/");
+          const isActive =
+            currentPath === href ||
+            (href !== "/" && currentPath.startsWith(href));
+          return (
+            <li>
+              <a
+                href={href}
+                class:list={[
+                  "text-sm font-medium transition-colors",
+                  isActive
+                    ? "text-brand-accent"
+                    : "text-foreground hover:text-brand-accent",
+                ]}
+              >
+                {link.label}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </nav>
+
+  <div class="short:pt-2 short:pb-3 px-6 pt-4 pb-6 xl:px-8">
+    <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+      {
+        footerLinks.map((link, i) => {
+          const href =
+            link.url || (link.page?.slug ? `/${link.page.slug}` : "/");
+          return (
+            <>
+              <a
+                href={href}
+                class="text-muted-foreground hover:text-foreground text-xs transition-colors"
+              >
+                {link.label}
+              </a>
+              {i < footerLinks.length - 1 && (
+                <span class="text-muted-foreground text-xs">&middot;</span>
+              )}
+            </>
+          );
+        })
+      }
+    </div>
+  </div>
+</aside>

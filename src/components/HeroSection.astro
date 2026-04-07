@@ -1,0 +1,65 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import { IconArrowRight } from "@tabler/icons-react";
+import type { SITE_SETTINGS_QUERY_RESULT } from "../lib/sanity.types";
+
+interface Props {
+  settings: SITE_SETTINGS_QUERY_RESULT;
+}
+
+const { settings } = Astro.props;
+---
+
+<section class="mx-auto max-w-7xl px-4 pt-8 md:px-8">
+  <div
+    class="bg-primary relative overflow-hidden rounded-2xl px-8 py-12 md:px-16 md:py-16"
+  >
+    <div class="relative z-10 mx-auto max-w-3xl text-center">
+      <h1
+        class="font-heading text-4xl leading-[1.1] font-bold tracking-tight text-white md:text-6xl"
+      >
+        {stegaClean(settings?.heroHeadline ?? "")}
+        {
+          stegaClean(settings?.heroHeadlineAccent ?? "") && (
+            <>
+              <br />
+              <span class="text-brand-accent">
+                {stegaClean(settings?.heroHeadlineAccent ?? "")}
+              </span>
+            </>
+          )
+        }
+      </h1>
+      {
+        stegaClean(settings?.heroDescription ?? "") && (
+          <p class="mx-auto mt-6 max-w-lg text-base leading-relaxed text-white/65">
+            {stegaClean(settings?.heroDescription ?? "")}
+          </p>
+        )
+      }
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+        {
+          stegaClean(settings?.heroPrimaryCta ?? "") && (
+            <a
+              href="/produits"
+              class="bg-brand-accent hover:bg-brand-accent/85 inline-flex items-center gap-2 rounded-(--radius) px-5 py-2.5 text-sm font-medium text-white transition-colors"
+            >
+              {stegaClean(settings?.heroPrimaryCta ?? "")}
+              <IconArrowRight size={16} />
+            </a>
+          )
+        }
+        {
+          stegaClean(settings?.heroSecondaryCta ?? "") && (
+            <a
+              href="/contact"
+              class="inline-flex items-center gap-2 rounded-(--radius) border border-white/20 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-white/10"
+            >
+              {stegaClean(settings?.heroSecondaryCta ?? "")}
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>

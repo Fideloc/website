@@ -69,7 +69,7 @@ const CATEGORY_IMAGES = {
 
 async function main() {
   const categories = await client.fetch(
-    '*[_type == "category"]{ _id, name, "slug": slug.current, "hasImage": defined(image.asset) }'
+    '*[_type == "category"]{ _id, name, "slug": slug.current, "hasImage": defined(image.asset) }',
   );
 
   console.log(`Found ${categories.length} categories.\n`);
